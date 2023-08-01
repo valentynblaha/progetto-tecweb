@@ -48,7 +48,7 @@ class Course(models.Model):
     
 
 class CourseScheduleDay(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="schedule")
     week_day = models.CharField(max_length=50, choices=WEEK_DAYS)
     start1 = models.TimeField()
     end1 = models.TimeField()
@@ -59,5 +59,5 @@ class CourseScheduleDay(models.Model):
         unique_together = ("course", "week_day")
 
     def __str__(self):
-        return self.course + " " + self.week_day
+        return self.course.name + " " + self.week_day
     
