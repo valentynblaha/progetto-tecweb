@@ -6,6 +6,7 @@ from rest_framework.generics import *
 from .models import *
 from rest_framework.permissions import *
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from .serializers import *
@@ -16,10 +17,14 @@ class ProductsListView(ListAPIView):
     serializer_class = ProductsSerializer
     queryset = Product.objects.all()
 
-class ProductDetailView(ListAPIView):
+class ProductDetailView(ModelViewSet):
     permission_classes = (AllowAny,)
-    serializer_class = ProductDetailSerializer
-    queryset = Product.objects.all()
+    def retrieve(self, request, pk):
+        queryset = Product.objects.all()
+        product = get_object_or_404(queryset,id=pk)
+        serializer = ProductsSerializer(product)
+        return Response(serializer.data)
+    
 
 class ProductQuantityUpdateView(APIView):
     def post(self, request, *args, **kwargs):
