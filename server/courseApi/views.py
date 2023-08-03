@@ -1,14 +1,15 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
-from .serializers import FitnessFieldSerializer, CourseSerializer
-from .models import FitnessField, Course
+from .serializers import FitnessCategorySerializer, CourseSerializer
+from .models import FitnessCategory, Course
+from .permissions import InstructorPermission
 
 # Create your views here.
-class FitnessFieldViewSet(viewsets.ModelViewSet):
-    queryset = FitnessField.objects.all()
-    serializer_class = FitnessFieldSerializer
+class FitnessCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = FitnessCategory.objects.all()
+    serializer_class = FitnessCategorySerializer
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, InstructorPermission]

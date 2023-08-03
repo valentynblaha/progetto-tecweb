@@ -2,18 +2,12 @@ from rest_framework import serializers
 from .models import *
 
 class ProductsSerializer(serializers.ModelSerializer):
-      catagory_description = serializers.SerializerMethodField()
-      size_description = serializers.SerializerMethodField()
       class Meta:
             model = Product
             fields = [
-                  'name','image','brand','category','size','description','rating',
+                  'id', 'name','image','brand','category','size','description','rating',
                   'numReviews','price','countInStock','createdAt'
             ]
-      def get_catagory_description(self,obj):
-            return obj.get_catagory_display()
-      def get_size_description(self,obj):
-            return obj.get_size_display()
 
 class  OrderedProductsSerializer(serializers.ModelSerializer):
        product = serializers.SerializerMethodField()
