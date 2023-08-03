@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 CATEGORY_CHOICES = (
     ('C', 'cloth'),
@@ -13,7 +13,7 @@ SIZE_CHOICES = (
     ('XL', 'extra large')
 )
 
-
+User = get_user_model()
 class Product(models.Model):
     name=models.CharField(max_length=200,null=True,blank=True)
     image=models.ImageField(null=True,blank=True)

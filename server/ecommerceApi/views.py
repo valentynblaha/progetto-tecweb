@@ -1,10 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.generics import *
 from .models import *
-from rest_framework.permissions import *
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadonly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
@@ -13,12 +12,12 @@ from .serializers import *
 
 
 class ProductsListView(ListAPIView):
-    permission_classes = (AllowAny,)
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = ProductsSerializer
     queryset = Product.objects.all()
 
 class ProductDetailView(ModelViewSet):
-    permission_classes = (AllowAny,)
+    permission_classes = [IsAdminOrReadOnly]
     def retrieve(self, request, pk):
         queryset = Product.objects.all()
         product = get_object_or_404(queryset,id=pk)
@@ -27,6 +26,7 @@ class ProductDetailView(ModelViewSet):
     
 
 class ProductQuantityUpdateView(APIView):
+    permission_classes = [IsAuthorOrReadonly]
     def post(self, request, *args, **kwargs):
         id = request.data.get('id',None)
         if id is None:
@@ -52,7 +52,7 @@ class ProductQuantityUpdateView(APIView):
 
 class OrderDetailView(RetrieveAPIView):
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthorOrReadonly]
 
     def get_objects(self):
         try:
@@ -64,10 +64,11 @@ class OrderDetailView(RetrieveAPIView):
         
 
 class ProductsDeleteView(DestroyAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthorOrReadonly]
     queryset = OrderProduct.objects.all()
 
 class Checkout(APIView):
+    permission_classes = [IsAuthorOrReadonly]
     def post(self, request , *args , **kwargs):
          cart_order = Cart.Object.get(user=self.request.user,ordered=False)
          card_number = request.data.get('card_number')
@@ -87,6 +88,7 @@ class Checkout(APIView):
              return Response({"message": "error occurred in payment processing "}, status=HTTP_400_BAD_REQUEST)
          
 class AddToCartView(APIView):
+    permission_classes = [IsAuthorOrReadonly]
     def post(self,request,*args,**kwargs):
         id_product = request.get.data('id_product',None)
         if id_product is None:
