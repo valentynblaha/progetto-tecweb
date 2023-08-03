@@ -153,6 +153,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
-    'http://localhost:3000',   # React
+    'http://localhost:5173',   # React Vite
     'http://localhost:5555'    # Postman
 ]
