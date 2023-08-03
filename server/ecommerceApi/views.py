@@ -9,21 +9,12 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from .serializers import *
+from .serializers import ProductsSerializer, OrderSerializer
 
-
-class ProductsListView(ListAPIView):
+class ProductsViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductsSerializer
     queryset = Product.objects.all()
-
-class ProductDetailView(ModelViewSet):
-    permission_classes = (AllowAny,)
-    def retrieve(self, request, pk):
-        queryset = Product.objects.all()
-        product = get_object_or_404(queryset,id=pk)
-        serializer = ProductsSerializer(product)
-        return Response(serializer.data)
     
 
 class ProductQuantityUpdateView(APIView):
@@ -62,10 +53,6 @@ class OrderDetailView(RetrieveAPIView):
         except ObjectDoesNotExist:
             raise Http404("no active order of given user")
         
-
-class ProductsDeleteView(DestroyAPIView):
-    permission_classes = (IsAuthenticated, )
-    queryset = OrderProduct.objects.all()
 
 class Checkout(APIView):
     def post(self, request , *args , **kwargs):
@@ -122,12 +109,3 @@ class AddToCartView(APIView):
             )
             cart.products.add(order_product)
             return Response(status=HTTP_200_OK)
-
-
-                           
-
-
-
-
-             
-             
