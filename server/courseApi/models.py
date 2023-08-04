@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
 WEEK_DAYS = [
     ("Mon", "Lunedì"),
@@ -11,21 +12,17 @@ WEEK_DAYS = [
     ("Sun", "Domenica"),
 ]
 
+User = get_user_model()
 
 class FitnessCategory(models.Model):
-    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
     
-
-
 class Instructor(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     cod_fisc = models.CharField(max_length=50, unique=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
     categories = models.ManyToManyField(FitnessCategory)
     gym_address = models.CharField(max_length=50)
 

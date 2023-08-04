@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny , IsAdminUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, InstructorSerializer
 from .models import CustomUser
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import get_user_model
@@ -8,10 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout
 import random
 import re
+import json
 # Create your views here.
 
-
-def generate_session_token(length=10):
+# TODO: generate a token properly
+def generate_session_token(length=50):
     return ''.join(random.SystemRandom().choice([chr(i) for i in range(97, 123)] + [str(i) for i in range(10)]) for _ in range(length))
 
 
@@ -21,8 +22,9 @@ def signin(request):
         return JsonResponse({'error': 'Send a post request with valid paramenter only'})
 
     # print(request.POST.get('email', None))  - if you will not get email, None will be printed
-    username = request.POST['email']
-    password = request.POST['password']
+    data = json.loads(request.body)
+    username = data['email']
+    password = data['password']
 
     print(username)
     print(password)
@@ -90,9 +92,9 @@ class RegisterUser(viewsets.ModelViewSet):
             return [permission() for permission in self.permission_classes]
 
 class RegisterInstructor(viewsets.ModelViewSet):
-    permission_classes_by_action = {'create': [IsAdminUser]}
+    permission_classes_by_action = {'create': [AllowAny]}
     queryset = CustomUser.objects.all().order_by('id')
-    serializer_class = UserSerializer
+    serializer_class = InstructorSerializer
 
     def get_permissions(self):
         try:
