@@ -1,7 +1,8 @@
 from rest_framework import viewsets, permissions
+from django.contrib.auth import get_user_model
 
-from .serializers import FitnessCategorySerializer, CourseSerializer
-from .models import FitnessCategory, Course
+from .serializers import FitnessCategorySerializer, CourseSerializer, InstructorSerializer
+from .models import FitnessCategory, Course, Instructor
 from .permissions import InstructorPermission
 
 # Create your views here.
@@ -12,4 +13,8 @@ class FitnessCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, InstructorPermission]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, InstructorPermission]
+
+class RegisterInstructor(viewsets.ModelViewSet):
+    queryset = Instructor.objects.all()
+    serializer_class = InstructorSerializer

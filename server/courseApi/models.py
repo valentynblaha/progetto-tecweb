@@ -12,23 +12,27 @@ WEEK_DAYS = [
     ("Sun", "Domenica"),
 ]
 
-User = get_user_model()
-
 class FitnessCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
+    class Meta:
+        verbose_name_plural = "fitness categories"
+
     def __str__(self):
-        return self.name
-    
-class Instructor(models.Model):
-    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+        return self.name    
+
+User = get_user_model()
+
+class Instructor(User):
     cod_fisc = models.CharField(max_length=50, unique=True)
     categories = models.ManyToManyField(FitnessCategory)
     gym_address = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name_plural = "instructors"
+
     def __str__(self):
-        return self.first_name + " " + self.last_name
-    
+        return (self.first_name + " " + self.last_name).strip() or self.email
 
 class Course(models.Model):
     id = models.BigAutoField(primary_key=True)
