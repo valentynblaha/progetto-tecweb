@@ -58,6 +58,7 @@ class InstructorSerializer(serializers.ModelSerializer):
             validated_data.pop('is_staff', None)
         instance = self.Meta.model(**validated_data)
         instance.is_instructor = True
+        instance.is_superuser = False
 
         if password is not None:
             instance.set_password(password)
