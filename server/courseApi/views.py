@@ -13,7 +13,7 @@ class FitnessCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, InstructorPermission]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly | InstructorPermission]
 
 class RegisterInstructor(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()

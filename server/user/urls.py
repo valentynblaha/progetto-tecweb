@@ -11,8 +11,6 @@ router = routers.DefaultRouter()
 router.register(r'register_user', views.RegisterUser)
 
 urlpatterns = [
-    # path('login/', views.signin, name='signin'),
-    # path('logout/<int:id>/', views.signout, name='signout'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls))

@@ -13,3 +13,11 @@ class InstructorPermission(permissions.BasePermission):
             return True
         
         return obj.instructor == request.user
+    
+
+class UpdateOnlyOwn(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in ['PUT', 'GET'] and request.user == obj:
+            return True
+        return False

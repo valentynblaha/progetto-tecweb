@@ -73,3 +73,5 @@ class CourseSchedule(models.Model):
     def __str__(self):
         return self.course.name + " " + self.week_day
     
+
+# TODO: make subscribsions

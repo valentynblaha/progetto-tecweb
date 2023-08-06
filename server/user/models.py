@@ -24,7 +24,6 @@ class BasicUser(AbstractUser):
     last_name = models.CharField(max_length=50, blank=True)
     phone = models.CharField(max_length=20)
     gender = models.CharField(max_length=10)
-    session_token = models.CharField(default=0, max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
