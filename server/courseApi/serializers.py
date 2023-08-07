@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import FitnessCategory, Course, CourseSchedule, Instructor
-
+from .models import FitnessCategory, Course, CourseSchedule, Instructor, CourseSubscription
+from user.serializers import UserPublicSerializer
 
 class FitnessCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,7 +47,21 @@ class CourseSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-    
+
+class CourseSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseSubscription
+        fields = ("id", "course")
+        depth = 1
+        
+class CourseSubscriptionSerializer2(serializers.ModelSerializer):
+
+    user = UserPublicSerializer()
+    class Meta:
+        model = CourseSubscription
+        fields = ("id", "course", "user")
+        depth = 1
+
 class InstructorSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):

@@ -62,7 +62,8 @@ class CourseSchedule(models.Model):
     end2 = models.TimeField(blank=True, null=True)
 
     def clean(self) -> None:
-        if (not self.start1 < self.end1 < self.start2 < self.end2 ):
+        if (self.start1 >= self.end1 or ((self.start2 is not None or self.end2 is not None) 
+                                         and not self.start1 < self.end1 < self.start2 < self.end2)):
             raise ValidationError("Orari non validi (sovrapposti o non in ordine)")
         
         return super().clean()
@@ -74,4 +75,12 @@ class CourseSchedule(models.Model):
         return self.course.name + " " + self.week_day
     
 
-# TODO: make subscribsions
+class CourseSubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "course")
+
+    def __str__(self) -> str:
+        return self.user.email + " to " + self.course.name

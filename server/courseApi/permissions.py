@@ -1,23 +1,23 @@
 from rest_framework import permissions
 
 
-class InstructorPermission(permissions.BasePermission):
+class IsInstructor(permissions.BasePermission):
     """
-    Custom permission to only allow owners of an object to edit it.
+    Custom permission for instructors
     """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        
-        return obj.instructor == request.user
+    def has_permission(self, request, view):
+        return hasattr(request.user, "is_instructor") and request.user.is_instructor == True
     
-
-class UpdateOnlyOwn(permissions.BasePermission):
-
     def has_object_permission(self, request, view, obj):
-        if request.method in ['PUT', 'GET'] and request.user == obj:
-            return True
-        return False
+        return hasattr(obj, "instructor") and obj.instructor.email == request.user.email
+
+class ReadOnly(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+    
+class UpdateOnly(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method == "PUT"
+    

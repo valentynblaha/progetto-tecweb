@@ -2,6 +2,11 @@ from rest_framework import serializers
 
 from .models import BasicUser
 
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BasicUser
+        fields = ("email", "first_name", "last_name")
+        read_only_fields = ("email", "first_name", "last_name")
 
 class UserSerializer(serializers.ModelSerializer):
 
