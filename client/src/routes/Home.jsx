@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
-import api from '../api/api'
-import { Button } from '@mui/material';
+import React, { useEffect } from "react";
+import api from "../api/api";
+import { Button } from "@mui/material";
 
 export default function Home() {
 
-useEffect(() => {
-  console.log("API called");
-  const data = api.get("/api/course/course/");
-}, [])
+  const callApi = async () => {
+    const data = await api.get("/api/course/course/");
+    console.log(data)
+  }
 
   return (
     <div>
       <h1>Home</h1>
-      <Button onClick={() => console.log("Hello")}></Button>
+      <Button onClick={() => callApi()} variant="outlined">Test Api</Button>
     </div>
-  )
+  );
 }
