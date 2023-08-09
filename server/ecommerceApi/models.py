@@ -1,11 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-CATEGORY_CHOICES = (
-    ('C', 'cloth'),
-    ('SP', 'supplement'),
-    ('EX', 'excercise equipment')
-)
+
 SIZE_CHOICES = (
     ('S', 'small'),
     ('M', 'Medium'),
@@ -14,12 +10,21 @@ SIZE_CHOICES = (
 )
 
 User = get_user_model()
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        verbose_name_plural = "product categories"
+
+    def __str__(self):
+        return self.name   
+    
 class Product(models.Model):
     id=models.BigAutoField(primary_key=True)
     name=models.CharField(max_length=200)
     image=models.FileField(upload_to="images/products", blank=True)
     brand=models.CharField(max_length=200,blank=True)
-    category=models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+    category=models.CharField(ProductCategory, max_length=2)
     size = models.CharField(choices=SIZE_CHOICES,max_length=2)
     description=models.TextField(blank=True)
     rating=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)

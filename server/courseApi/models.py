@@ -39,7 +39,7 @@ class Course(models.Model):
     name = models.CharField(max_length=50, unique=True)
     instructor = models.ForeignKey(Instructor, on_delete=models.RESTRICT)
     approved = models.BooleanField(default=False)
-    category = models.ForeignKey(FitnessCategory, on_delete=models.RESTRICT)
+    category = models.ForeignKey(FitnessCategory, on_delete=models.RESTRICT )
     price = models.DecimalField(default=0, decimal_places=2, max_digits=7)
     max_subs = models.IntegerField(default=15)
 
