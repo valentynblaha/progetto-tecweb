@@ -18,6 +18,10 @@ import {
 
 import { Menu as MenuIcon, Logout } from "@mui/icons-material";
 
+const LinkBehavior = React.forwardRef((props, ref) => (
+  <Link ref={ref} to="/" {...props} role={undefined} />
+));
+
 export default function Root() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -60,7 +64,7 @@ export default function Root() {
               FITCOURSE
             </Typography>
             <Box sx={{ flexGrow: 1, display: "flex" }}>
-              <Button
+              <Button component={LinkBehavior} to="/"
                 sx={{
                   my: 2,
                   color: "white",
@@ -69,10 +73,16 @@ export default function Root() {
               >
                 Corsi
               </Button>
-              <Link style={{ marginY: "1rem", color: "white", display: "block" }} to="/products">
-                Prodotti
-              </Link>
-              <Button
+              <Button component={LinkBehavior} to="/products"
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                }}
+              >
+                Products
+              </Button>
+              <Button component={LinkBehavior} to="/"
                 sx={{
                   my: 2,
                   color: "white",
