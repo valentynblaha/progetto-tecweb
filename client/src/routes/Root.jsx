@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import {
   AppBar,
   Container,
@@ -13,9 +13,10 @@ import {
   Button,
   Tooltip,
   Avatar,
+  ListItemIcon
 } from "@mui/material";
 
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon, Logout } from "@mui/icons-material";
 
 export default function Root() {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -68,15 +69,9 @@ export default function Root() {
               >
                 Corsi
               </Button>
-              <Button
-                sx={{
-                  my: 2,
-                  color: "white",
-                  display: "block",
-                }}
-              >
+              <Link style={{ marginY: "1rem", color: "white", display: "block" }} to="/products">
                 Prodotti
-              </Button>
+              </Link>
               <Button
                 sx={{
                   my: 2,
@@ -91,7 +86,10 @@ export default function Root() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    alt="Remy Sharp"
+                    src="http://localhost:8000/media/images/profilepictures/stock_profile_img.jpg"
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -110,11 +108,12 @@ export default function Root() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {/* {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))} */}
+                <MenuItem>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
               </Menu>
             </Box>
           </Toolbar>
