@@ -4,16 +4,13 @@ import ProductsTabPanel from "../components/ProductsTabPanel";
 import { useLoaderData } from "react-router-dom";
 import api from "../api/api";
 
-const CATEGORY_CHOICES = {
-  C: "cloth",
-  SP: "supplement",
-  EX: "excercise equipme",
-};
 
-export async function productsLoader({ params }) {
-  const categories = Object.keys(CATEGORY_CHOICES).map((v) => ({ id: v, name: CATEGORY_CHOICES[v] }));
-  const productsData = await api.get("/api/ecommerce/products");
-  const products = productsData.data;
+export async function productsLoader() {
+  // TODO: refactor to support simultaneous api calls and errors
+  const categoriesResponse = await api.get("/api/ecommerce/categories");
+  const productsResponse = await api.get("/api/ecommerce/products");
+  const products = productsResponse.data;
+  const categories = categoriesResponse.data;
   return { categories, products };
 }
 
@@ -39,7 +36,7 @@ export default function Products() {
           key={val.id}
           value={value}
           index={index}
-          products={products ? products.filter((prod) => prod.category === val.id) : []}
+          products={products ? products.filter((prod) => Number.parseInt(prod.category) === val.id) : []} // TODO: might not work if category id is a number
         />
       ))}
     </Box>

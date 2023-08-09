@@ -6,16 +6,20 @@ from rest_framework.generics import *
 from .models import *
 from rest_framework.permissions import *
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from .serializers import ProductsSerializer, OrderSerializer
+from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer
 
 class ProductsViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductsSerializer
     queryset = Product.objects.all()
     
+class ProductCategoriesViewSet(ReadOnlyModelViewSet):
+    permission_classes = (AllowAny,)
+    serializer_class = ProductCategorySerializer
+    queryset = ProductCategory.objects.all()
 
 class ProductQuantityUpdateView(APIView):
     def post(self, request, *args, **kwargs):
