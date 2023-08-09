@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from .models import *
 
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+      class Meta:
+            model = ProductCategory
+            fields = ["id", "name"]
+
 class ProductsSerializer(serializers.ModelSerializer):
       class Meta:
             model = Product
@@ -8,6 +14,8 @@ class ProductsSerializer(serializers.ModelSerializer):
                   'id', 'name','image','brand','category','size','description','rating',
                   'numReviews','price','countInStock','createdAt'
             ]
+      def get_catagory(self, obj):
+            return ProductCategorySerializer(obj.category).data
 
 class  OrderedProductsSerializer(serializers.ModelSerializer):
        product = serializers.SerializerMethodField()

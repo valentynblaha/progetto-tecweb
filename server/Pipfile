@@ -11,6 +11,7 @@ django-allauth = "*"
 dj-rest-auth = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
+djangorestframework-jwt = "*"
 
 [dev-packages]
 
