@@ -17,4 +17,30 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(undefined, async (error) => {
+  const { config, response } = error;
+  if (!config || !response) {
+    return Promise.reject(error);
+  }
+  if (response.status === 401 && response.data.code === "token_not_valid") {
+    const accessResponse = await axios.post(
+      BASE_URL + "api/user/token/refresh/",
+      {
+        refresh: localStorage.getItem("refreshtoken"),
+      },
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("accesstoken"),
+        },
+      }
+    );
+    const { access, refresh } = accessResponse.data;
+    localStorage.setItem("accesstoken", access);
+    localStorage.setItem("refreshtoken", refresh);
+    return axios(response.config);
+  }
+  console.log(error);
+});
+
 export default api;
