@@ -30,24 +30,30 @@ export default function Login() {
 
   const paperStyle={padding :20,height:'70vh',width:380, margin:"20px auto"}
   const avatarStyle={backgroundColor:'blue'}
-  const btnstyle={margin:'8px 0'}
+  const btnstyle={margin:'20px 0'}
+  const btnstyle2={margin:'20px 0 10px 0'}
   return(
-      <Grid>
+      <Grid >
           <Paper elevation={10} style={paperStyle}>
               <Grid align='center'>
                    <Avatar style={avatarStyle}></Avatar>
                   <h2>Sign In</h2>
               </Grid>
+              <Grid container rowGap={1}>
               <TextField label='Email' placeholder='Enter Email' value={email} onChange={handleChange("email")} fullWidth required/>
-              <TextField label='Password' placeholder='Enter password' type='password' value={password} onChange={handleChange("password")} fullWidth required/>  
+              <TextField label='Password' placeholder='Enter password' type='password' value={password} onChange={handleChange("password")} fullWidth required/>
+              </Grid> 
               <Button type='submit' color='primary' variant="contained" onClick={handleSubmit} style={btnstyle} fullWidth>Sign in</Button>
-              <Typography > Sei nuovo su Fitcourse? 
-                   <Link href="/signup" underline='none' >
-                      {' '} iscriviti
-                   </Link>
-              </Typography>
+              <Typography align='center'> Sei nuovo su Fitcourse?</Typography>
+              <Button variant="outlined" align='center' style={btnstyle2} fullWidth href="/signup/user">registrati come utente</Button>
+              <Button variant="outlined" align='center' fullWidth href="/signup/instructor">registrati come istruttore</Button> 
           </Paper>
       </Grid>
   )
 
 }
+
+
+// <Link href="/signup" underline='none' >
+//{' '} iscriviti
+//</Link>

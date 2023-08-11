@@ -138,7 +138,7 @@ export default function Root() {
                 display: "block",
               }}
             >
-              signin
+              Accedi
             </Button>
           </Toolbar>
         </Container>
