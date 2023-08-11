@@ -93,7 +93,7 @@ export default function Root() {
               </Button>
             </Box>
 
-            <Box sx={{ flexGrow: 0 }}>
+            <Box sx={{ flexGrow: 0,display: "flex" }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
@@ -102,6 +102,15 @@ export default function Root() {
                   />
                 </IconButton>
               </Tooltip>
+              <Button component={LinkBehavior} to="/login"
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                }}
+              >
+                signin
+              </Button>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
