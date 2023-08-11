@@ -1,15 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
-from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.generics import *
 from .models import *
 from rest_framework.permissions import *
 from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer
+from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer, ReviewsSerializer
 
 class ProductsViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
@@ -78,6 +78,7 @@ class Checkout(APIView):
              return Response({"message": "error occurred in payment processing "}, status=HTTP_400_BAD_REQUEST)
          
 class AddToCartView(APIView):
+
     def post(self,request,*args,**kwargs):
         id_product = request.get.data('id_product',None)
         if id_product is None:
@@ -113,3 +114,28 @@ class AddToCartView(APIView):
             )
             cart.products.add(order_product)
             return Response(status=HTTP_200_OK)
+        
+class ReviewView(ModelViewSet):
+     permission_classes = (IsAuthenticatedOrReadOnly,)
+    
+     def list(self, request):
+        queryset = Review.objects.filter(user=request.product_id)
+        serializer = ReviewsSerializer(queryset, many=True)
+        return Response(serializer.data)
+     
+     def create(self, request):
+        product_id = request.data.get("product", None)
+        if product_id is not None:
+            product_reviewed = get_object_or_404(Product,id=product_id)
+            review = Review.objects.create(
+                product=product_reviewed,
+                user = request.User,
+                name = request.data.get('name',None),
+                rating = request.data.get('rating',None),
+                comment = request.data.get('comment',None)
+            )
+            serializer = ReviewsSerializer(review)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        else:
+            return Response({"detail": "You need to provide a product"}, status=status.HTTP_400_BAD_REQUEST)
