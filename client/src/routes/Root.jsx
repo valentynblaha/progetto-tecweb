@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, forwardRef } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigation } from "react-router-dom";
 import {
   AppBar,
   Container,
@@ -14,12 +14,14 @@ import {
   Tooltip,
   Avatar,
   ListItemIcon,
+  LinearProgress,
 } from "@mui/material";
 
 import { Menu as MenuIcon, Logout } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
 
 export default function Root() {
+  const navigation = useNavigation();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -143,6 +145,11 @@ export default function Root() {
           </Toolbar>
         </Container>
       </AppBar>
+      {navigation.state === "loading" && (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
       <Outlet />
     </>
   );

@@ -1,6 +1,8 @@
 import { Button, Card, CardActionArea, CardContent, CardMedia, Grid, Rating, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import CustomRating from "./CustomRating";
+import LazyImg from "../utils/LazyImg";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -9,7 +11,7 @@ export default function ProductCard({ product }) {
     <Grid item xs={3} height={400}>
       <Card sx={{ cursor: "pointer" }}>
         <CardActionArea onClick={() => navigate(String(product.id))}>
-          <img
+          <LazyImg
             src={product.image}
             alt="Product image"
             width="auto"
@@ -24,7 +26,7 @@ export default function ProductCard({ product }) {
               <Typography color="#808080">{product.description}</Typography>
             </div>
             <div>
-              <Rating value={Number.parseInt(product.rating) / 2} readOnly precision={0.5} />
+              <CustomRating value={product.rating} readOnly/>
             </div>
             <div>
               <Typography fontSize="2em" textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">

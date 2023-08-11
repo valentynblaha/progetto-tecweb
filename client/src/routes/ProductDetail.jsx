@@ -4,15 +4,19 @@ import { useLoaderData } from "react-router-dom";
 import { Box, Button, Divider, Grid, Paper, Rating, Typography } from "@mui/material";
 import { AddShoppingCart } from "@mui/icons-material";
 import "./ProductDetail.css";
+import CustomRating from "../components/CustomRating";
+import ReviewCard from "../components/ReviewCard";
 
 export const productLoader = async ({ params }) => {
-  const response = await api.get("api/ecommerce/products/" + params.productId);
-  const product = response.data;
-  return { product };
+  const response = await Promise.all([
+    api.get("api/ecommerce/products/" + params.productId),
+    api.get("api/ecommerce/reviews/" + params.productId),
+  ]);
+  return { product: response[0].data, reviews: response[1].data };
 };
 
 export default function ProductDetail() {
-  const { product } = useLoaderData();
+  const { product, reviews } = useLoaderData();
 
   return (
     <Box>
@@ -26,8 +30,7 @@ export default function ProductDetail() {
           </div>
           <Typography>Da: {product.brand}</Typography>
           <div className="d-flex align-items-center">
-
-            <Rating precision={0.5} value={product.rating / 2} readOnly sx={{marginRight: "0.5em"}}/>
+            <CustomRating value={product.rating} readOnly sx={{ marginRight: "0.5em" }} />
             <span>{"(" + product.numReviews + ")"}</span>
           </div>
 
@@ -43,32 +46,38 @@ export default function ProductDetail() {
           <Typography color="#808080" fontSize="0.8rem">
             Prezzo:
           </Typography>
-          <Typography fontSize="2rem" fontWeight="bold" sx={{my: 2}}>
+          <Typography fontSize="2rem" fontWeight="bold" sx={{ my: 2 }}>
             € {product.price}
           </Typography>
-          <Button size="large" startIcon={<AddShoppingCart/>} variant="outlined">Aggiungi al carrello</Button>
-          
+          <Button size="large" startIcon={<AddShoppingCart />} variant="outlined">
+            Aggiungi al carrello
+          </Button>
+
           <Paper sx={{ p: 1, my: 1 }}>
-          <Typography color="#808080">Dettagli:</Typography>
-          <table className="product-details-table">
-            <tbody>
-              <tr>
-                <td>Disponibilità:</td>
-                <td>{product.countInStock}</td>
-              </tr>
-              <tr>
-                <td>Dimensione:</td>
-                <td>{product.size}</td>
-              </tr>
-            </tbody>
-          </table>
+            <Typography color="#808080">Dettagli:</Typography>
+            <table className="product-details-table">
+              <tbody>
+                <tr>
+                  <td>Disponibilità:</td>
+                  <td>{product.countInStock}</td>
+                </tr>
+                <tr>
+                  <td>Dimensione:</td>
+                  <td>{product.size}</td>
+                </tr>
+              </tbody>
+            </table>
           </Paper>
-          
         </Grid>
       </Grid>
-      <Divider/>
+      <Divider />
       <Box>
-        <Typography variant="h5" m={2}>Recensioni ({product.numReviews})</Typography>
+        <Typography variant="h5" m={2}>
+          Recensioni ({product.numReviews})
+        </Typography>
+        {reviews.map((review) => (
+          <ReviewCard key={review.id} review={review} />
+        ))}
       </Box>
     </Box>
   );

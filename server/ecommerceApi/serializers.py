@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.db.models import Avg
+from user.serializers import UserPublicSerializer
 from .models import *
 
 
@@ -58,6 +59,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
+
+      user = UserPublicSerializer()
       class Meta:
             model = Review
             fields = ['id','product','user','name','rating','comment']
