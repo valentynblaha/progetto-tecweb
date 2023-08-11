@@ -44,3 +44,9 @@ class OrderSerializer(serializers.ModelSerializer):
             return OrderedProductsSerializer(obj.products.all(),many=True).data
       def get_total(self, obj):
             return obj.get_total()
+
+
+class ReviewsSerializer(serializers.ModelSerializer):
+      class meta:
+            model = Review
+            fields = ['id','product','User','name','rating','comment']
