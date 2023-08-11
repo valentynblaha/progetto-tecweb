@@ -5,7 +5,7 @@ from .views import ProductsViewSet, AddToCartView, OrderDetailView, Checkout, Pr
 router = routers.SimpleRouter()
 router.register("products", ProductsViewSet)
 router.register("categories", ProductCategoriesViewSet)
-router.register("reviews", ReviewView)
+router.register("reviews", ReviewView, basename="reviews")
 
 urlpatterns = [
     path('', include(router.urls)),

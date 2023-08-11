@@ -6,7 +6,7 @@ from .models import *
 from rest_framework.permissions import *
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer, ReviewsSerializer
@@ -115,11 +115,11 @@ class AddToCartView(APIView):
             cart.products.add(order_product)
             return Response(status=HTTP_200_OK)
         
-class ReviewView(ModelViewSet):
+class ReviewView(ViewSet):
      permission_classes = (IsAuthenticatedOrReadOnly,)
     
-     def list(self, request):
-        queryset = Review.objects.filter(user=request.product_id)
+     def retrieve(self, request, pk=None):
+        queryset = Review.objects.filter(product=pk)
         serializer = ReviewsSerializer(queryset, many=True)
         return Response(serializer.data)
      
@@ -129,11 +129,13 @@ class ReviewView(ModelViewSet):
             product_reviewed = get_object_or_404(Product,id=product_id)
             review = Review.objects.create(
                 product=product_reviewed,
-                user = request.User,
+                user = request.user,
                 name = request.data.get('name',None),
                 rating = request.data.get('rating',None),
                 comment = request.data.get('comment',None)
             )
+            product_reviewed.numReviews += 1
+            product_reviewed.save()
             serializer = ReviewsSerializer(review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             
