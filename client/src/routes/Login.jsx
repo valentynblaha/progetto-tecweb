@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Grid,Paper, Avatar, TextField, Button, Typography,Link } from '@mui/material'
 import api from "../api/api";
 
 
-async function postUserData(email,password){
-   params = {email: email , password: password}
-   const responce = await api.post('  ',params)
+async function postUserData(email, password){
+   const response = await api.post('api/user/token/', {email, password})
+   console.log(response.data)
 }
 
 export default function Login() {

@@ -7,6 +7,7 @@ import Products, { productsLoader } from './routes/Products'
 import Login from './routes/Login'
 import Signup from './routes/Signup'
 import ErrorPage from './components/ErrorPage'
+import ProductDetail, { productLoader } from './routes/ProductDetail'
 
 const router = createBrowserRouter([
   {
@@ -19,9 +20,14 @@ const router = createBrowserRouter([
         element: <Home/>
       },
       {
-        path: "/products",        
+        path: "/products",    
         loader: productsLoader,
         element: <Products/>,
+      },
+      {
+        path: "/products/:productId",
+        loader: productLoader,
+        element: <ProductDetail/>
       }
     ]
   },

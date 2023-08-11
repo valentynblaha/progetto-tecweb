@@ -1,0 +1,7 @@
+.product-details-table td:nth-child(2) {
+  font-weight: bold;
+}
+
+.product-details-table td {
+  padding-right: 1em;
+}

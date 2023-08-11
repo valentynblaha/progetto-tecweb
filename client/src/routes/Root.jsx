@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
   AppBar,
@@ -13,14 +13,11 @@ import {
   Button,
   Tooltip,
   Avatar,
-  ListItemIcon
+  ListItemIcon,
 } from "@mui/material";
 
 import { Menu as MenuIcon, Logout } from "@mui/icons-material";
-
-const LinkBehavior = React.forwardRef((props, ref) => (
-  <Link ref={ref} to="/" {...props} role={undefined} />
-));
+import LinkBehavior from "../utils/LinkBehaviour";
 
 export default function Root() {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -64,7 +61,9 @@ export default function Root() {
               FITCOURSE
             </Typography>
             <Box sx={{ flexGrow: 1, display: "flex" }}>
-              <Button component={LinkBehavior} to="/"
+              <Button
+                component={LinkBehavior}
+                to="/"
                 sx={{
                   my: 2,
                   color: "white",
@@ -73,16 +72,20 @@ export default function Root() {
               >
                 Corsi
               </Button>
-              <Button component={LinkBehavior} to="/products"
+              <Button
+                component={LinkBehavior}
+                to="/products"
                 sx={{
                   my: 2,
                   color: "white",
                   display: "block",
                 }}
               >
-                Products
+                Prodotti
               </Button>
-              <Button component={LinkBehavior} to="/"
+              <Button
+                component={LinkBehavior}
+                to="/"
                 sx={{
                   my: 2,
                   color: "white",
@@ -93,7 +96,7 @@ export default function Root() {
               </Button>
             </Box>
 
-            <Box sx={{ flexGrow: 0,display: "flex" }}>
+            <Box sx={{ flexGrow: 0, display: "flex" }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
@@ -102,15 +105,6 @@ export default function Root() {
                   />
                 </IconButton>
               </Tooltip>
-              <Button component={LinkBehavior} to="/login"
-                sx={{
-                  my: 2,
-                  color: "white",
-                  display: "block",
-                }}
-              >
-                signin
-              </Button>
               <Menu
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
@@ -135,6 +129,17 @@ export default function Root() {
                 </MenuItem>
               </Menu>
             </Box>
+            <Button
+              component={LinkBehavior}
+              to="/login"
+              sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+              }}
+            >
+              signin
+            </Button>
           </Toolbar>
         </Container>
       </AppBar>

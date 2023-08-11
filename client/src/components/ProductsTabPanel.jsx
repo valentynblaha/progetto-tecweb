@@ -15,7 +15,7 @@ export default function ProductsTabPanel(props) {
         {value === index && (
           <Grid container sx={{ p: 2 }} spacing={2}>
             {products.map(prod => (
-              <ProductCard key={prod.id} product={prod} />
+              <ProductCard key={prod.id} product={prod}/>
             ))}
           </Grid>
         )}
