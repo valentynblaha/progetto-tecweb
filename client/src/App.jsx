@@ -6,6 +6,7 @@ import Home from './routes/Home'
 import Products, { productsLoader } from './routes/Products'
 import Login from './routes/Login'
 import Signup from './routes/Signup'
+import SignupInstructor from './routes/SignupInstructor'
 import ErrorPage from './components/ErrorPage'
 import ProductDetail, { productLoader } from './routes/ProductDetail'
 import Courses, { coursesLoader } from './routes/Courses'
@@ -42,8 +43,12 @@ const router = createBrowserRouter([
     element: <Login/>
   },
   {
-    path: "/signup",
+    path: "/signup/user",
     element: <Signup/>
+  },
+  {
+    path: "/signup/instructor",
+    element: <SignupInstructor/>
   }
 ])
 
