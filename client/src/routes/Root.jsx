@@ -19,11 +19,13 @@ import {
 
 import { Menu as MenuIcon, Logout } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
+import useAuth from "../hooks/useAuth";
 
 export default function Root() {
   const navigation = useNavigation();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [auth, setAuth] = useAuth()
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -98,7 +100,7 @@ export default function Root() {
               </Button>
             </Box>
 
-            <Box sx={{ flexGrow: 0, display: "flex" }}>
+            {auth.email && <Box sx={{ flexGrow: 0, display: "flex" }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
@@ -123,15 +125,19 @@ export default function Root() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem>
+                <MenuItem onClick={() => {
+                  localStorage.removeItem("accesstoken")
+                  localStorage.removeItem("refreshtoken")
+                  setAuth({})
+                }}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
                   </ListItemIcon>
                   Logout
                 </MenuItem>
               </Menu>
-            </Box>
-            <Button
+            </Box>}
+            {!auth.email && <Button
               component={LinkBehavior}
               to="/login"
               sx={{
@@ -141,7 +147,7 @@ export default function Root() {
               }}
             >
               Accedi
-            </Button>
+            </Button>}
           </Toolbar>
         </Container>
       </AppBar>

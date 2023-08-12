@@ -38,6 +38,8 @@ class Course(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     instructor = models.ForeignKey(Instructor, on_delete=models.RESTRICT)
+    description = models.TextField(blank=True)
+    image = models.FileField(upload_to="images/courses", blank=True)
     approved = models.BooleanField(default=False)
     category = models.ForeignKey(FitnessCategory, on_delete=models.RESTRICT )
     price = models.DecimalField(default=0, decimal_places=2, max_digits=7)

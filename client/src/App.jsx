@@ -12,6 +12,7 @@ import ProductDetail, { productLoader } from './routes/ProductDetail'
 import Courses, { coursesLoader } from './routes/Courses'
 import EditCourse, { courseEditAction } from './routes/EditCourse'
 import CourseDetail, { courseLoader } from './routes/CourseDetail'
+import { AuthProvider } from './context/AuthContext'
 
 const router = createBrowserRouter([
   {
@@ -67,7 +68,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router}/>
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   )
 }
 
