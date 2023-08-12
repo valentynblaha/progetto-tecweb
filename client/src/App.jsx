@@ -8,6 +8,7 @@ import Login from './routes/Login'
 import Signup from './routes/Signup'
 import ErrorPage from './components/ErrorPage'
 import ProductDetail, { productLoader } from './routes/ProductDetail'
+import Courses, { coursesLoader } from './routes/Courses'
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,12 @@ const router = createBrowserRouter([
         path: "/products/:productId",
         loader: productLoader,
         element: <ProductDetail/>
-      }
+      },
+      {
+        path: "/courses",    
+        loader: coursesLoader,
+        element: <Courses/>,
+      },
     ]
   },
   {

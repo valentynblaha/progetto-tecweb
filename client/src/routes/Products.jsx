@@ -1,17 +1,17 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import ProductsTabPanel from "../components/ProductsTabPanel";
 import { useLoaderData } from "react-router-dom";
 import api from "../api/api";
+import ProductsTabPanel from "../components/ProductsTabPanel";
+import { CustomTabs, CustomTab } from "../utils/CustomTabs";
 
 
 export async function productsLoader() {
-  // TODO: refactor to support simultaneous api calls and errors
-  const categoriesResponse = await api.get("/api/ecommerce/categories");
-  const productsResponse = await api.get("/api/ecommerce/products");
-  const products = productsResponse.data;
-  const categories = categoriesResponse.data;
-  return { categories, products };
+  const response = await Promise.all([
+    api.get("/api/ecommerce/categories"),
+    api.get("/api/ecommerce/products"),
+  ]);
+  return { categories: response[0].data, products: response[1].data };
 }
 
 export default function Products() {
@@ -29,17 +29,18 @@ export default function Products() {
   return (
     <Box sx={{ width: "100%"}}>
       <Box>
-        <Tabs value={currentTab} onChange={handleChange} aria-label="basic tabs example">
+        <CustomTabs value={currentTab} onChange={handleChange} aria-label="basic tabs example">
           {categories.map((val) => (
-            <Tab key={val.id} label={val.name} />
+            <CustomTab key={val.id} label={val.name} />
           ))}
-        </Tabs>
+        </CustomTabs>
       </Box>
       {categories.map((val, index) => (
         <ProductsTabPanel
           key={val.id}
           value={currentTab}
           index={index}
+          category={val}
           products={products ? products.filter((prod) => Number.parseInt(prod.category) === val.id) : []} // TODO: might not work if category id is a number
         />
       ))}
