@@ -42,7 +42,7 @@ export default function Root() {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" elevation={0}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
@@ -65,7 +65,7 @@ export default function Root() {
             <Box sx={{ flexGrow: 1, display: "flex" }}>
               <Button
                 component={LinkBehavior}
-                to="/"
+                to="/courses"
                 sx={{
                   my: 2,
                   color: "white",

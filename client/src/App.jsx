@@ -9,6 +9,9 @@ import Signup from './routes/Signup'
 import SignupInstructor from './routes/SignupInstructor'
 import ErrorPage from './components/ErrorPage'
 import ProductDetail, { productLoader } from './routes/ProductDetail'
+import Courses, { coursesLoader } from './routes/Courses'
+import EditCourse, { courseEditAction } from './routes/EditCourse'
+import CourseDetail, { courseLoader } from './routes/CourseDetail'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,22 @@ const router = createBrowserRouter([
         path: "/products/:productId",
         loader: productLoader,
         element: <ProductDetail/>
+      },
+      {
+        path: "/courses",    
+        loader: coursesLoader,
+        element: <Courses/>,
+      },
+      {
+        path: "/courses/:courseId",
+        loader: courseLoader,
+        element: <CourseDetail/>
+      },
+      {
+        path: "/courses/:courseId/edit",
+        loader: courseLoader,
+        element: <EditCourse/>,
+        action: courseEditAction
       }
     ]
   },

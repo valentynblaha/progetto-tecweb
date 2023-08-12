@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import CustomRating from "./CustomRating";
 import LazyImg from "../utils/LazyImg";
+import { AddShoppingCart } from "@mui/icons-material";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function ProductCard({ product }) {
               </Typography>
             </div>
             <div>
-              <Button variant="outlined" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+              <Button variant="outlined" startIcon={<AddShoppingCart/>} onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
                 Aggiungi al carrello
               </Button>
             </div>
