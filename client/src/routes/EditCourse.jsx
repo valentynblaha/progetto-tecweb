@@ -59,6 +59,17 @@ export default function EditCourse() {
         </Grid>
         <Grid item xs={6}>
           <FormControl fullWidth>
+            <InputLabel htmlFor="course-image">Immagine</InputLabel>
+            <OutlinedInput
+              id="course-image"
+              name="image"
+              type="file"
+              label="Immagine"
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl fullWidth>
             <InputLabel>Categoria</InputLabel>
             <Select name="category" label="Categoria" defaultValue={course.category}>
               {categories.map((val) => (

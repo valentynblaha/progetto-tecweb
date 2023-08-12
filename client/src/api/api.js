@@ -35,12 +35,20 @@ api.interceptors.response.use(undefined, async (error) => {
         },
       }
     );
-    const { access, refresh } = accessResponse.data;
+    if (accessResponse.status !== 200) {
+      return Promise.reject(error)
+    }
+    const { access } = accessResponse.data;
     localStorage.setItem("accesstoken", access);
-    localStorage.setItem("refreshtoken", refresh);
-    return axios(response.config);
+    return axios({
+      ...response.config,
+      headers: {
+        ...response.config.headers,
+        Authorization: "Bearer " + access,
+      },
+    });
   }
-  console.log(error);
+  return Promise.reject(error);
 });
 
 export default api;
