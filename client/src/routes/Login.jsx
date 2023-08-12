@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import { Grid,Paper, Avatar, TextField, Button, Typography,Link } from '@mui/material'
+import { useNavigate } from "react-router-dom";
+import { Grid,Paper, Avatar, TextField, Button, Typography } from '@mui/material'
 import api from "../api/api";
 
 
@@ -15,18 +16,24 @@ export default function Login() {
   });
 
   const {email,password} = values
+  const navigate = useNavigate();
 
   const handleChange = (name) =>
     (event) => {
       setValues({ ...values, [name]: event.target.value });
     };
+  const performRedirect = () => {
+      
+      navigate('/')
+   };
 
   const handleSubmit = (event) => {
       event.preventDefault();
       postUserData(email,password);
+      performRedirect();
        
     };
-
+  
 
   const paperStyle={padding :20,height:'70vh',width:380, margin:"20px auto"}
   const avatarStyle={backgroundColor:'blue'}
@@ -48,6 +55,7 @@ export default function Login() {
               <Button variant="outlined" align='center' style={btnstyle2} fullWidth href="/signup/user">registrati come utente</Button>
               <Button variant="outlined" align='center' fullWidth href="/signup/instructor">registrati come istruttore</Button> 
           </Paper>
+          
       </Grid>
   )
 

@@ -1,9 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Grid, Paper, Avatar, Typography, TextField, Button , 
 Radio , RadioGroup , FormControlLabel , FormControl , FormLabel , Checkbox} from '@mui/material'
 
 
 export default function Signup() {
+    const navigate = useNavigate();
+    const performRedirect = () => {
+        navigate('/')
+     };
     const paperStyle = { padding: '30px 20px', width: 400, margin: "20px auto" }
     const avatarStyle = { backgroundColor: 'blue' }
     const marginTop = { marginTop: 5 }
@@ -35,10 +40,13 @@ export default function Signup() {
                         control={<Checkbox name="checkedA" />}
                         label="I accept the terms and conditions."
                     />
-                    <Button type='submit' variant='contained' color='primary'>Sign up</Button>
+                    <Button type='submit' onClick={performRedirect} variant='contained' color='primary'>Sign up</Button>
                     </Grid>
                 </form>
+               
             </Paper>
+            
         </Grid>
+        
     )
 }

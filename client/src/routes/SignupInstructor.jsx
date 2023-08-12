@@ -1,9 +1,13 @@
-import React from 'react'
+import React , {useState} from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Grid, Paper, Avatar, Typography, TextField, Button , 
 Radio , RadioGroup , FormControlLabel , FormControl , FormLabel , Checkbox} from '@mui/material'
 
-
 export default function Signup() {
+    const navigate = useNavigate();
+    const performRedirect = () => {
+        navigate('/')
+     };
     const paperStyle = { padding: '30px 20px', width: 500, margin: "20px auto" }
     const avatarStyle = { backgroundColor: 'blue' }
     const marginTop = { marginTop: 5 }
@@ -33,8 +37,7 @@ export default function Signup() {
                     <TextField fullWidth label='Numero Cellulare' />
                     <TextField fullWidth label='Password' />
                     <TextField fullWidth label='Conferma Password'/>
-                   
-                    <Button style={marginTop} type='submit' variant='contained' color='primary'>Sign up</Button>
+                    <Button style={marginTop} type='submit' variant='contained' onClick={performRedirect} color='primary'>Sign up</Button>
                     </Grid>
                 </form>
             </Paper>
