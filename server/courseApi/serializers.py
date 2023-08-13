@@ -9,11 +9,12 @@ class FitnessCategorySerializer(serializers.ModelSerializer):
 
 
 class CourseScheduleSerializer(serializers.ModelSerializer):
-
+    week_day = serializers.SerializerMethodField()
     class Meta:
         model = CourseSchedule
         fields = ("week_day", "start1", "end1", "start2", "end2")
-
+    def get_week_day(self,obj):
+        return obj.get_week_day_display()
 
 class CourseSerializer(serializers.ModelSerializer):
 

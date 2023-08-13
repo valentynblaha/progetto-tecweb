@@ -72,7 +72,7 @@ class CourseSchedule(models.Model):
 
     class Meta:
         unique_together = ("course", "week_day")
-
+    
     def __str__(self):
         return self.course.name + " " + self.week_day
     
