@@ -14,9 +14,11 @@ import {
   TextField,
 } from "@mui/material";
 import { Clear, Save } from "@mui/icons-material";
+import MuiFileInput from "../utils/MuiFileInput";
 
 export const courseEditAction = async ({ request, params }) => {
   const formData = await request.formData();
+  console.log(formData);
   const updates = Object.fromEntries(formData);
   await api.put("api/course/course/" + params.courseId + "/", updates);
   return redirect(`/courses/${params.courseId}`);
@@ -58,15 +60,14 @@ export default function EditCourse() {
           />
         </Grid>
         <Grid item xs={6}>
-          <FormControl fullWidth>
-            <InputLabel htmlFor="course-image">Immagine</InputLabel>
-            <OutlinedInput
-              id="course-image"
-              name="image"
-              type="file"
-              label="Immagine"
-            />
-          </FormControl>
+          <MuiFileInput
+            accept="image/*"
+            id="course-image"
+            url="api/course/upload/"
+            style={{ width: "200px", height: "200px" }}
+          >
+            Carica immagine
+          </MuiFileInput>
         </Grid>
         <Grid item xs={6}>
           <FormControl fullWidth>
@@ -106,10 +107,12 @@ export default function EditCourse() {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" startIcon={<Save/>} size="large" sx={{marginRight: 2}}>
-                Salva
+          <Button variant="contained" startIcon={<Save />} size="large" sx={{ marginRight: 2 }} type="submit">
+            Salva
           </Button>
-          <Button variant="contained" color="error" startIcon={<Clear/>} size="large">Annulla</Button>
+          <Button variant="contained" color="error" startIcon={<Clear />} size="large">
+            Annulla
+          </Button>
         </Grid>
       </Grid>
     </Form>

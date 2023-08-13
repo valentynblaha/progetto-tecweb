@@ -6,8 +6,8 @@ export default function ErrorPage() {
   console.log(error);
   return (
     <div className='d-flex align-items-center justify-content-center w-100 flex-column' style={{height: "100vh"}}>
-      <div><span style={{fontSize: "5rem"}}>{error.status}</span></div>
-      <div style={{color: '#b0b0b0'}}>{error.code || error.statusText}</div>
+      <div><span style={{fontSize: "5rem"}}>{error.status || error.response?.status}</span></div>
+      <div style={{color: '#b0b0b0'}}>{error.response?.statusText || error.code || error.statusText}</div>
       <div>Si è verificato un errore!</div>
     </div>
   )

@@ -18,7 +18,7 @@ class CourseScheduleSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
 
     schedule = CourseScheduleSerializer(many=True)
-    instructor = serializers.PrimaryKeyRelatedField(queryset=Instructor.objects.all())
+    instructor = serializers.PrimaryKeyRelatedField(queryset=Instructor.objects.all(), required=False)
     category = serializers.PrimaryKeyRelatedField(queryset=FitnessCategory.objects.all())
 
     class Meta:
@@ -47,6 +47,28 @@ class CourseSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+    
+    def create(self, validated_data):
+        validated_data.pop("approved", None)
+        validated_data.pop("instructor", None)
+        approved = False
+        instructor = Instructor.objects.get(email=self.context.get("request").user.email)
+        schedule_data = validated_data.pop("schedule", None)
+        if len(schedule_data) == 0:
+            raise serializers.ValidationError({"detail": "Inserire almeno un giorno di orari"})
+        instance = self.Meta.model(approved=approved, instructor=instructor, **validated_data)
+        instance.save()
+        if schedule_data:
+            for schedule_item_data in schedule_data:
+                
+                schedule_item_data["course"] = instance
+                CourseSchedule.objects.create(**schedule_item_data)
+
+        return instance
+    
+    def get_validation_exclusions(self):
+        exclusions = super(CourseSerializer, self).get_validation_exclusions()
+        return exclusions + ['instructor']
 
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -98,3 +120,6 @@ class InstructorSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
         fields = ('id', 'email', 'password', 'phone', 'gender',
                   'is_active', 'is_staff', 'is_superuser', 'is_instructor', 'cod_fisc', 'gym_address', 'categories')
+
+class ImageUploadSerializer(serializers.Serializer):
+    image = serializers.ImageField()

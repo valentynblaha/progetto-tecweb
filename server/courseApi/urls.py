@@ -10,5 +10,6 @@ router.register("register_instructor", views.InstructorViewSet)
 router.register("subscriptions", views.CourseSubscriptionViewSet, basename="subscriptions")
 
 urlpatterns = [
-    path("", include(router.urls))
+    path("", include(router.urls)),
+    path('upload/', views.ImageUploadView.as_view(), name='upload_image')
 ]

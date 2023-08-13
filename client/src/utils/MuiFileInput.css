@@ -1,0 +1,11 @@
+.image-upload-input {
+  min-width: 200px;
+  min-height: 200px;
+  background-image: url("/upload-image-icon.svg");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  border: 2px dashed #808080;
+  border-radius: 1rem;
+  cursor: pointer;
+}

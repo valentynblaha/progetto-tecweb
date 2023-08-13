@@ -1,25 +1,34 @@
 from django.db import IntegrityError
-from rest_framework import viewsets, permissions
+from django.core.files.storage import FileSystemStorage
+from rest_framework import viewsets, permissions, views
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import mixins
 from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 
-from .serializers import FitnessCategorySerializer, CourseSerializer, InstructorSerializer, CourseSubscriptionSerializer, CourseSubscriptionSerializer2
+import os
+
+from .serializers import FitnessCategorySerializer, CourseSerializer, InstructorSerializer, CourseSubscriptionSerializer, CourseSubscriptionSerializer2, ImageUploadSerializer
 from .models import FitnessCategory, Course, Instructor, CourseSubscription
 from .permissions import IsInstructor, ReadOnly
 
 # Create your views here.
+
+
 class FitnessCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FitnessCategory.objects.all()
     serializer_class = FitnessCategorySerializer
     permission_classes = [permissions.IsAdminUser | ReadOnly]
 
+
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsInstructor | ReadOnly]
+
 
 class InstructorViewSet(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()
@@ -45,12 +54,13 @@ class CourseSubscriptionViewSet(mixins.DestroyModelMixin, viewsets.ViewSet):
             if request.user.email == course.instructor.email:
                 return Response({"detail": "You cannot subscribe to your own course"}, status=status.HTTP_400_BAD_REQUEST)
             try:
-                course_subsription = CourseSubscription.objects.create(course=course, user=request.user)
+                course_subsription = CourseSubscription.objects.create(
+                    course=course, user=request.user)
             except IntegrityError:
                 return Response({"detail": "Subscription already exists"}, status=status.HTTP_400_BAD_REQUEST)
             serializer = CourseSubscriptionSerializer(course_subsription)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
+
         else:
             return Response({"detail": "You need to provide a course id"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,9 +73,28 @@ class CourseSubscriptionViewSet(mixins.DestroyModelMixin, viewsets.ViewSet):
             return Response({"detail": "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         course_subscription.delete()
         return Response({"detail": "Successfully deleted"}, status=status.HTTP_200_OK)
-    
+
     @action(detail=False)
     def own_courses(self, request):
-        queryset = CourseSubscription.objects.select_related("course").filter(course__instructor=request.user)
+        queryset = CourseSubscription.objects.select_related(
+            "course").filter(course__instructor=request.user)
         serializer = CourseSubscriptionSerializer2(queryset, many=True)
         return Response(serializer.data)
+
+
+class ImageUploadView(views.APIView):
+
+    PATH = "images/courses/"
+
+    def post(self, request):
+        if request.user.is_anonymous:
+            return Response({"detail": "Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ImageUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            image = serializer.validated_data['image']
+            fs = FileSystemStorage(location=os.path.join(
+                settings.MEDIA_ROOT, self.PATH))
+            filename = fs.save(image.name, image)
+            return Response({'message': 'Image uploaded successfully', "file": self.PATH + filename},
+                            status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

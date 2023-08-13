@@ -56,7 +56,7 @@ export default function Login() {
   const btnstyle = { margin: "20px 0" };
   const btnstyle2 = { margin: "20px 0 10px 0" };
   return (
-    <Grid>
+    <Grid component="form">
       <Paper elevation={10} style={paperStyle}>
         <Grid align="center">
           <Avatar style={avatarStyle}></Avatar>
