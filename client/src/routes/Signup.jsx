@@ -1,19 +1,19 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import { Grid, Paper, Avatar, Typography, TextField, Button , 
 Radio , RadioGroup , FormControlLabel , FormControl , FormLabel , Checkbox} from '@mui/material'
 
 
 export default function Signup() {
-    const navigate = useNavigate();
+    const [success, setSuccess] = useState(false)
     const performRedirect = () => {
-        navigate('/')
+        setSuccess(true)
      };
     const paperStyle = { padding: '30px 20px', width: 400, margin: "20px auto" }
     const avatarStyle = { backgroundColor: 'blue' }
     const marginTop = { marginTop: 5 }
     const marginbottom = { marginbottom: 5 }
-    return (
+    return (success ? <div>Great<Link to="/login">Vai al login</Link></div> :
         <Grid>
             <Paper elevation={20} style={paperStyle}>
                 <Grid align='center'>
@@ -34,8 +34,8 @@ export default function Signup() {
                         </RadioGroup>
                     </FormControl>
                     <TextField fullWidth label='Numero Cellulare' />
-                    <TextField fullWidth label='Password' />
-                    <TextField fullWidth label='Conferma Password'/>
+                    <TextField fullWidth label='Password' type='password' />
+                    <TextField fullWidth label='Conferma Password' type='password'/>
                     <FormControlLabel
                         control={<Checkbox name="checkedA" />}
                         label="I accept the terms and conditions."
