@@ -49,6 +49,7 @@ export const courseCreateAction = async ({ request, params }) => {
 };
 
 export const newCourseLoader = async () => {
+  // TODO: fix categories to display only those of instructor
   const response = await api.get("api/course/fitnessCategory");
   const categories = response.data;
   const course = {

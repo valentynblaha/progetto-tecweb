@@ -26,19 +26,17 @@ class FitnessCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsInstructor | ReadOnly]
 
-    # def list(self, request, *args, **kwargs):
-    #     if not request.user.is_anonymous and request.user.is_instructor:
-    #         queryset = Course.objects.filter(Q(instructor=Instructor.objects.get(
-    #             email=request.user.email)) | Q(approved=True))
-    #     else:
-    #         queryset = Course.objects.filter(approved=True)
-    #     serializer = CourseSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_anonymous and user.is_instructor:
+            queryset = Course.objects.filter(Q(instructor=Instructor.objects.get(
+                email=user.email)) | Q(approved=True))
+        else:
+            queryset = Course.objects.filter(approved=True)
+        return queryset
 
 class InstructorViewSet(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()

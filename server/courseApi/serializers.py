@@ -133,7 +133,7 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'password', 'phone', 'gender',
+        fields = ('id', 'email', 'password', 'phone', 'gender', 'image',
                   'is_active', 'is_staff', 'is_superuser', 'is_instructor', 'cod_fisc', 'gym_address', 'categories')
 
 class ImageUploadSerializer(serializers.Serializer):
