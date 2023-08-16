@@ -55,7 +55,7 @@ export default function CourseDetail() {
                 </tr>
                 <div className="schedule">
                     {course.schedule.map((schedule) => (
-                       <div className="schedule: ">
+                       <div key={schedule.week_day} className="schedule: ">
                          <Typography color="#808080" fontSize="0.8rem">
                          {schedule.week_day + ' : '}  
                          </Typography>

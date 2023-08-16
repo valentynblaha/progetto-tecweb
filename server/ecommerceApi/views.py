@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError
 import os
 from rest_framework.generics import *
@@ -13,7 +12,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
-from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer, ReviewsSerializer,ImageUploadSerializer
+from .serializers import ProductsSerializer, OrderSerializer, ProductCategorySerializer, ReviewsSerializer
 
 class ProductsViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
@@ -138,26 +137,9 @@ class ReviewView(ViewSet):
                 rating = request.data.get('rating',None),
                 comment = request.data.get('comment',None)
             )
-            product_reviewed.numReviews += 1
             product_reviewed.save()
             serializer = ReviewsSerializer(review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         else:
             return Response({"detail": "You need to provide a product"}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-class ImageUploadView(views.APIView):
-
-    PATH = "images/ecommerce/"
-
-    def post(self, request):
-        serializer = ImageUploadSerializer(data=request.data)
-        if serializer.is_valid():
-            image = serializer.validated_data['image']
-            fs = FileSystemStorage(location=os.path.join(
-                settings.MEDIA_ROOT, self.PATH))
-            filename = fs.save(image.name, image)
-            return Response({'message': 'Image uploaded successfully', "file": self.PATH + filename},
-                            status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

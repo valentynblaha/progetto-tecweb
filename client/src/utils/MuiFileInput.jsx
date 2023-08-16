@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import api from "../api/api";
 import "./MuiFileInput.css";
 
-export default function MuiFileInput({ children, accept, id, url, style, name }) {
+export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required=false }) {
   const [loading, setLoading] = useState(false);
   const [imgPath, setImgPath] = useState("");
 
@@ -21,16 +21,17 @@ export default function MuiFileInput({ children, accept, id, url, style, name })
         id={id}
         type="file"
         disabled={loading}
+        required={required}
         onChange={(e) => {
           setLoading(true);
           const formData = new FormData();
           formData.append("image", e.target.files[0]);
-
           api
             .post(url, formData, config)
             .then((response) => {
               if (response.status === 200) {
                 setImgPath(response.data.file);
+                onChange(response.data.file)
                 console.log("File uploaded", response.data.file);
               }
               setLoading(false);

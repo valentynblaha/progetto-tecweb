@@ -3,6 +3,20 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import BasicUser
 
+class URLToFileField(serializers.FileField):
+    def to_internal_value(self, data):
+        # Assuming 'data' is the URL to the media file
+        return data  # Return the URL as is
+
+    def to_representation(self, value):
+        # Assuming 'value' is the path to the media file in the server
+        if value:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(value.url)
+            return value.url
+        return None
+    
 class UserPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasicUser
@@ -10,6 +24,7 @@ class UserPublicSerializer(serializers.ModelSerializer):
         read_only_fields = ("email", "first_name", "last_name")
 
 class UserSerializer(serializers.ModelSerializer):
+    image = URLToFileField()
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -41,5 +56,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasicUser
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'password', 'phone', 'gender',
-                  'is_active', 'is_staff', 'is_superuser', 'is_instructor')
+        fields = ('id', 'email', 'password', 'phone', 'gender', 'image',
+                  'is_active', 'is_staff', 'is_superuser', 'is_instructor', 'first_name', 'last_name')
+
+
+class ImageUploadSerializer(serializers.Serializer):
+    image = serializers.ImageField()

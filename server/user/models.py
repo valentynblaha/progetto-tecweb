@@ -19,6 +19,7 @@ class BasicUser(AbstractUser):
     username = None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    image = models.FileField(upload_to="images/profile_pictures", blank=True)
     is_instructor = models.BooleanField(default=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50, blank=True)
