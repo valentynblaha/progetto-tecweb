@@ -8,10 +8,17 @@ export const AuthProvider = ({ children }) => {
     const props = useState({});
 
     const authenticate = async() => {
-      const { data: user } = await api.get("api/user/register_user/");
-      if (user.email) {
-        props[1](user)
+      try {
+        const { data: user } = await api.get("api/user/register_user/");
+        if (user.email) {
+          props[1](user)
+        }
+      } catch(error) {
+        if (error.response?.status === 401 && error.response?.data.code === "token_not_valid") {
+          localStorage.removeItem("accesstoken");
+        }
       }
+      
     }
 
     useEffect(() => {

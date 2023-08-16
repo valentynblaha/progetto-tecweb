@@ -8,7 +8,7 @@ export default function CourseCard({ course }) {
   return (
     <Grid item xs={3}>
       <Card sx={{ cursor: "pointer" }}>
-        <CardActionArea onClick={() => navigate(String(course.id))}>
+        <CardActionArea onClick={() => navigate(String(course.id))} component="div">
           <CardContent>
             <div>
               <Typography fontWeight="bold">{course.name}</Typography>

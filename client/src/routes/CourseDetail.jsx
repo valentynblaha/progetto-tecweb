@@ -7,9 +7,10 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
 
 export const courseLoader = async ({ params }) => {
   const responseCourse = await api.get("api/course/course/" + params.courseId)
+  const responseCategories = await api.get("api/course/fitnessCategory");
   const idInstructor = (await responseCourse).data.instructor
   const responseInstructor = await api.get("api/course/register_instructor/" + idInstructor)
-  return { course: responseCourse.data, instructor: responseInstructor.data };
+  return { course: responseCourse.data, instructor: responseInstructor.data, categories: responseCategories.data };
 };
 
 

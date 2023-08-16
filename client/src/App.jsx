@@ -1,77 +1,87 @@
-import React, { useState } from 'react'
-import {createBrowserRouter, RouterProvider} from "react-router-dom"
-import './App.css'
-import Root from './routes/Root'
-import Home from './routes/Home'
-import Products, { productsLoader } from './routes/Products'
-import Login from './routes/Login'
-import Signup from './routes/Signup'
-import SignupInstructor from './routes/SignupInstructor'
-import ErrorPage from './components/ErrorPage'
-import ProductDetail, { productLoader } from './routes/ProductDetail'
-import Courses, { coursesLoader } from './routes/Courses'
-import EditCourse, { courseEditAction } from './routes/EditCourse'
-import CourseDetail, { courseLoader } from './routes/CourseDetail'
-import { AuthProvider } from './context/AuthContext'
+import React, { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./App.css";
+import Root from "./routes/Root";
+import Home from "./routes/Home";
+import Products, { productsLoader } from "./routes/Products";
+import Login from "./routes/Login";
+import Signup from "./routes/Signup";
+import SignupInstructor from "./routes/SignupInstructor";
+import ErrorPage from "./components/ErrorPage";
+import ProductDetail, { productLoader } from "./routes/ProductDetail";
+import Courses, { coursesLoader } from "./routes/Courses";
+import EditCourse, { courseCreateAction, courseEditAction, newCourseLoader } from "./routes/EditCourse";
+import CourseDetail, { courseLoader } from "./routes/CourseDetail";
+import { AuthProvider } from "./context/AuthContext";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root/>,
-    errorElement: <ErrorPage/>,
+    element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        element: <Home/>
+        element: <Home />,
       },
       {
-        path: "/products",    
+        path: "/products",
         loader: productsLoader,
-        element: <Products/>,
+        element: <Products />,
       },
       {
         path: "/products/:productId",
         loader: productLoader,
-        element: <ProductDetail/>
+        element: <ProductDetail />,
       },
       {
-        path: "/courses",    
+        path: "/courses",
         loader: coursesLoader,
-        element: <Courses/>,
+        element: <Courses />,
       },
       {
         path: "/courses/:courseId",
         loader: courseLoader,
-        element: <CourseDetail/>
+        element: <CourseDetail />,
+      },
+      {
+        path: "/courses/create",
+        element: <EditCourse/>,
+        loader: newCourseLoader,
+        action: courseCreateAction
       },
       {
         path: "/courses/:courseId/edit",
         loader: courseLoader,
-        element: <EditCourse/>,
-        action: courseEditAction
-      }
-    ]
+        element: <EditCourse />,
+        action: courseEditAction,
+      },
+    ],
   },
   {
     path: "/login",
-    element: <Login/>
+    element: <Login />,
   },
   {
     path: "/signup/user",
-    element: <Signup/>
+    element: <Signup />,
   },
   {
     path: "/signup/instructor",
-    element: <SignupInstructor/>
-  }
-])
+    element: <SignupInstructor />,
+  },
+]);
 
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router}/>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

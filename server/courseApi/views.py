@@ -87,7 +87,7 @@ class ImageUploadView(views.APIView):
     PATH = "images/courses/"
 
     def post(self, request):
-        if request.user.is_anonymous:
+        if request.user.is_anonymous: # TODO: allow only instructor
             return Response({"detail": "Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = ImageUploadSerializer(data=request.data)
         if serializer.is_valid():

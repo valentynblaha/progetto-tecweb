@@ -9,19 +9,29 @@ class FitnessCategorySerializer(serializers.ModelSerializer):
 
 
 class CourseScheduleSerializer(serializers.ModelSerializer):
-    week_day = serializers.SerializerMethodField()
     class Meta:
         model = CourseSchedule
         fields = ("week_day", "start1", "end1", "start2", "end2")
-    def get_week_day(self,obj):
-        return obj.get_week_day_display()
+    
+class URLToFileField(serializers.FileField):
+    def to_internal_value(self, data):
+        # Assuming 'data' is the URL to the media file
+        return data  # Return the URL as is
 
+    def to_representation(self, value):
+        # Assuming 'value' is the path to the media file in the server
+        if value:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(value.url)
+            return value.url
+        return None
 class CourseSerializer(serializers.ModelSerializer):
 
     schedule = CourseScheduleSerializer(many=True)
     instructor = serializers.PrimaryKeyRelatedField(queryset=Instructor.objects.all(), required=False)
     category = serializers.PrimaryKeyRelatedField(queryset=FitnessCategory.objects.all())
-
+    image = URLToFileField()
     class Meta:
         model = Course
         fields = ("id", "name", "description", "image", "instructor", "approved",
@@ -63,7 +73,11 @@ class CourseSerializer(serializers.ModelSerializer):
             for schedule_item_data in schedule_data:
                 
                 schedule_item_data["course"] = instance
-                CourseSchedule.objects.create(**schedule_item_data)
+                course_schedule = CourseScheduleSerializer(data=schedule_item_data)
+                if course_schedule.is_valid():
+                    CourseSchedule.objects.create(**schedule_item_data)
+                else:
+                    raise serializers.ValidationError(course_schedule.errors)
 
         return instance
     
@@ -124,3 +138,4 @@ class InstructorSerializer(serializers.ModelSerializer):
 
 class ImageUploadSerializer(serializers.Serializer):
     image = serializers.ImageField()
+
