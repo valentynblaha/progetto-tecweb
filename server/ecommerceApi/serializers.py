@@ -64,3 +64,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
       class Meta:
             model = Review
             fields = ['id','product','user','name','rating','comment']
+
+
+class ImageUploadSerializer(serializers.Serializer):
+    image = serializers.ImageField()

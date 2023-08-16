@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import api from "../api/api";
-import { useLoaderData } from "react-router-dom";
-import { Box, Button, Divider, Grid, Paper, Rating, Typography } from "@mui/material";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { Box, Button, Divider, Grid, Paper, Rating, TextField, Typography} from "@mui/material";
 import { AddShoppingCart } from "@mui/icons-material";
 import "./ProductDetail.css";
 import CustomRating from "../components/CustomRating";
@@ -16,8 +16,35 @@ export const productLoader = async ({ params }) => {
 };
 
 export default function ProductDetail() {
+  
+  const navigate = useNavigate();
   const { product, reviews } = useLoaderData();
+  const { value, setValue} = useState({ 
+    name: "",
+    rating: "",
+    comment: "",
+  });
+  
+  const { name, rating, comment } = {value} ;
+  const handleChange = (names) => (event) => {
+    setValue({ ...value, [names]: event.target.value });
+  };
+ 
+  var isAuthenticated = true
+  const postReview = async(product,name, rating,comment) => {
+        const response = await api.post("api/ecommerce/reviews/", { product, name , rating , comment });
+        console.log(response)
+        return response
+  }
 
+  const handleReview = () =>{
+    if(isAuthenticated){
+      const response = postReview(product.productId,name,rating,comment)
+   }else{
+       navigate('/login')
+   }
+  }
+   
   return (
     <Box>
       <Grid container spacing={2} padding={2}>
@@ -67,7 +94,20 @@ export default function ProductDetail() {
                 </tr>
               </tbody>
             </table>
-          </Paper>
+          </Paper> 
+           <Paper sx={{ p:1, my: 1}}>
+            <Grid container rowGap={1}>
+                <Typography variant='h7'>Nome:</Typography>
+                <TextField  value={name} size="small" onChange={handleChange("name")} fullWidth label='Nome'></TextField>
+                <Typography variant='h7'>Recensione:</Typography>
+                <TextField value={comment} onChange={handleChange("comment")} multiline fullWidth label='Recensione'></TextField>
+                <Typography variant='h7'>Ratings:</Typography>
+                <Rating style={{ margin: "0px 0px 0px 20px"}} Value={rating} precision={0.5} onChange={handleChange("rating")}/>
+                <Button variant="contained" style={{ margin: "10px 0px 10px 650px"}}  onClick={handleReview}>Insersci la recensione</Button>      
+            </Grid>
+           </Paper>
+            
+     
         </Grid>
       </Grid>
       <Divider />
