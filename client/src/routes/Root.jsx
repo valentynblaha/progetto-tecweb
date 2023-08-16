@@ -15,9 +15,10 @@ import {
   Avatar,
   ListItemIcon,
   LinearProgress,
+  Badge,
 } from "@mui/material";
 
-import { Menu as MenuIcon, Logout } from "@mui/icons-material";
+import { Menu as MenuIcon, Logout, ShoppingCart } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
 import useAuth from "../hooks/useAuth";
 
@@ -25,7 +26,7 @@ export default function Root() {
   const navigation = useNavigation();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [auth, setAuth] = useAuth()
+  const [auth, setAuth] = useAuth();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -100,54 +101,80 @@ export default function Root() {
               </Button>
             </Box>
 
-            {auth.email && <Box sx={{ flexGrow: 0, display: "flex" }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src="http://localhost:8000/media/images/profilepictures/stock_profile_img.jpg"
-                  />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+            {auth.email && (
+              <Box sx={{ flexGrow: 0, display: "flex" }}>
+                <Tooltip title="Opzioni utente">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src="http://localhost:8000/media/images/profilepictures/stock_profile_img.jpg"
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      localStorage.removeItem("accesstoken");
+                      localStorage.removeItem("refreshtoken");
+                      setAuth({});
+                      window.location.href = "/"
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </Box>
+            )}
+            {auth.email && (
+              <Box flexGrow={0} display="flex">
+                <Tooltip title="Carrello">
+                  <IconButton onClick={() => null} sx={{ p: 0, marginLeft: 2 }}>
+                    <Badge
+                      badgeContent={1}
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          backgroundColor: "#ff7588",
+                          boxShadow: "1px 1px 1px #00000054"
+                        },
+                      }}
+                    >
+                      <ShoppingCart sx={{ color: "white", fontSize: "2rem" }} />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
+            {!auth.email && (
+              <Button
+                component={LinkBehavior}
+                to="/login"
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={() => {
-                  localStorage.removeItem("accesstoken")
-                  localStorage.removeItem("refreshtoken")
-                  setAuth({})
-                }}>
-                  <ListItemIcon>
-                    <Logout fontSize="small" />
-                  </ListItemIcon>
-                  Logout
-                </MenuItem>
-              </Menu>
-            </Box>}
-            {!auth.email && <Button
-              component={LinkBehavior}
-              to="/login"
-              sx={{
-                my: 2,
-                color: "white",
-                display: "block",
-              }}
-            >
-              Accedi
-            </Button>}
+                Accedi
+              </Button>
+            )}
           </Toolbar>
         </Container>
       </AppBar>

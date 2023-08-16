@@ -1,12 +1,32 @@
 import { Skeleton } from "@mui/material";
 import React, { useState } from "react";
 
-export default function LazyImg(props) {
+export default function LazyImg({
+  onLoad = () => null,
+  objectFit = "contain",
+  width = "auto",
+  height = "auto",
+  src=""
+}) {
   const [loaded, setLoaded] = useState(false);
 
   return (
     <div style={{ position: "relative" }}>
-      <img loading="lazy" {...props} onLoad={() => setLoaded(true)} />
+      <img
+        loading="lazy"
+        onLoad={(e) => {
+          setLoaded(true);
+          onLoad(e);
+        }}
+        src={src}
+        width={100}
+        height={200}
+        style={{ objectFit, width, height }}
+        onError={(e) => {
+          console.log(e);
+          this.src = "/public/placeholder.svg";
+        }}
+      />
       {!loaded && (
         <Skeleton
           variant="rectangular"

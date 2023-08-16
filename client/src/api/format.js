@@ -20,3 +20,5 @@ export function strTimeToDayjs(str) {
 export function dayjsTimeToStr(dayjsVal) {
   return dayjsVal.format("hh:mm:ss")
 }
+
+export default dayjs;

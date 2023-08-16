@@ -88,7 +88,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseSubscription
-        fields = ("id", "course")
+        fields = ("id", "course", "created_at")
         depth = 1
         
 class CourseSubscriptionSerializer2(serializers.ModelSerializer):
@@ -96,7 +96,7 @@ class CourseSubscriptionSerializer2(serializers.ModelSerializer):
     user = UserPublicSerializer()
     class Meta:
         model = CourseSubscription
-        fields = ("id", "course", "user")
+        fields = ("id", "course", "user", "created_at")
         depth = 1
 
 class InstructorSerializer(serializers.ModelSerializer):

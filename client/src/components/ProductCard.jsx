@@ -9,15 +9,15 @@ export default function ProductCard({ product }) {
   const navigate = useNavigate();
 
   return (
-    <Grid item xs={3} height={400}>
+    <Grid item xs={3}>
       <Card sx={{ cursor: "pointer" }}>
         <CardActionArea onClick={() => navigate(String(product.id))}>
           <LazyImg
             src={product.image}
             alt="Product image"
-            width="auto"
+            width="100%"
             height={200}
-            style={{ objectFit: "contain", width: "100%" }}
+            objectFit="contain"
           />
           <CardContent>
             <div>

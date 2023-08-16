@@ -20,7 +20,7 @@ export default function ProductDetail() {
   const { product, reviews } = useLoaderData();
   const [value, setValue] = useState({
     name: "",
-    rating: "",
+    rating: 0,
     comment: "",
   });
 

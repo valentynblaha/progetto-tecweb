@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from rest_framework import viewsets, permissions, views
 from django.contrib.auth import get_user_model
@@ -28,6 +29,15 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsInstructor | ReadOnly]
+
+    # def list(self, request, *args, **kwargs):
+    #     if not request.user.is_anonymous and request.user.is_instructor:
+    #         queryset = Course.objects.filter(Q(instructor=Instructor.objects.get(
+    #             email=request.user.email)) | Q(approved=True))
+    #     else:
+    #         queryset = Course.objects.filter(approved=True)
+    #     serializer = CourseSerializer(queryset, many=True)
+    #     return Response(serializer.data)
 
 
 class InstructorViewSet(viewsets.ModelViewSet):
@@ -87,7 +97,7 @@ class ImageUploadView(views.APIView):
     PATH = "images/courses/"
 
     def post(self, request):
-        if request.user.is_anonymous: # TODO: allow only instructor
+        if request.user.is_anonymous:  # TODO: allow only instructor
             return Response({"detail": "Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = ImageUploadSerializer(data=request.data)
         if serializer.is_valid():

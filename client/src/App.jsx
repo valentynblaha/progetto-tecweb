@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Root from "./routes/Root";
-import Home from "./routes/Home";
+import Home, { homeLoader } from "./routes/Home";
 import Products, { productsLoader } from "./routes/Products";
 import Login from "./routes/Login";
 import Signup from "./routes/Signup";
@@ -25,6 +25,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+        loader: homeLoader
       },
       {
         path: "/products",

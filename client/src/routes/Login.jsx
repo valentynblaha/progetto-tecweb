@@ -20,7 +20,7 @@ export default function Login() {
     if (auth.email) {
       navigate("/");
     }
-  }, [])
+  }, [auth])
 
   const postUserData = async(email, password) => {
     try {
@@ -33,7 +33,7 @@ export default function Login() {
         throw new Error("Errore nel recapitare i dati dell'utente");
       }
       setAuth(user);
-      performRedirect();
+      //performRedirect();
     } catch (error) {
       setError(String("Email o password non corretti"));
     }
@@ -42,9 +42,9 @@ export default function Login() {
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
-  const performRedirect = () => {
-    navigate("/");
-  };
+  // const performRedirect = () => {
+  //   navigate("/");
+  // };
 
   const handleSubmit = (event) => {
     event.preventDefault();
