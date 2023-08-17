@@ -26,6 +26,7 @@ class URLToFileField(serializers.FileField):
                 return request.build_absolute_uri(value.url)
             return value.url
         return None
+    
 class CourseSerializer(serializers.ModelSerializer):
 
     schedule = CourseScheduleSerializer(many=True)
@@ -100,6 +101,7 @@ class CourseSubscriptionSerializer2(serializers.ModelSerializer):
         depth = 1
 
 class InstructorSerializer(serializers.ModelSerializer):
+    image = URLToFileField()
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -133,8 +135,8 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'password', 'phone', 'gender',
-                  'is_active', 'is_staff', 'is_superuser', 'is_instructor', 'cod_fisc', 'gym_address', 'categories')
+        fields = ('id', 'email', 'password', 'phone', 'gender', 'image', 'first_name' , 'last_name',
+                  'is_active', 'is_staff', 'is_superuser', 'is_instructor', 'cod_fisc', 'gym_address')
 
 class ImageUploadSerializer(serializers.Serializer):
     image = serializers.ImageField()

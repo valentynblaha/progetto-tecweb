@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState  } from 'react'
 import api from '../api/api';
-import { Box, Button, Divider, Grid, Paper, Rating, Typography } from "@mui/material";
-import { useLoaderData } from 'react-router-dom';
+import { Box, Button, Divider, Grid, Paper, Rating, Typography ,TextField,Select,FormControl,InputLabel,MenuItem} from "@mui/material";
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 
 
@@ -16,6 +16,16 @@ export const courseLoader = async ({ params }) => {
 
 export default function CourseDetail() {
   const {course , instructor} = useLoaderData()
+  const navigate = useNavigate()
+  const postData = async () => {
+    const response = await api.post("api/course/subscriptions/",  {course: course.id} );
+    return response.json();
+  };
+
+  const handleSubmit = (e) => {
+    const response = postData();
+    console.log(response)
+  };
   
   return (
 
@@ -82,9 +92,7 @@ export default function CourseDetail() {
               
             </table>
           </Paper>
-          <Button size="large" startIcon={<PlaylistAddCheckCircleIcon />} variant="outlined">
-            iscrivimi
-          </Button>
+          <Button variant="contained" onClick={handleSubmit} startIcon={<PlaylistAddCheckCircleIcon />}> iscrivimi</Button>
         </Grid>
       </Grid>
       <Divider />
