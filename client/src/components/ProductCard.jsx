@@ -1,17 +1,16 @@
 import { AddShoppingCart } from "@mui/icons-material";
 import { Button, Card, CardActionArea, CardContent, Grid, Typography } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import LazyImg from "../utils/LazyImg";
+import LinkBehavior from "../utils/LinkBehaviour";
 import CustomRating from "./CustomRating";
 
 export default function ProductCard({ product }) {
-  const navigate = useNavigate();
 
   return (
     <Grid item xs={3}>
       <Card>
-        <CardActionArea onClick={() => navigate(String(product.id))}>
+        <CardActionArea to={"/products/" + String(product.id)} component={LinkBehavior}>
           <LazyImg src={product.image} alt="Product image" width="100%" height={200} objectFit="contain" />
         </CardActionArea>
         <CardContent>

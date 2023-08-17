@@ -122,8 +122,10 @@ export default function ProductDetail() {
               label="Quantità"
               variant="outlined"
               onChange={(e) => {
-                const val = Number.parseInt(e.target.value);
-                setQty(Number.isNaN(val) ? 0 : val);
+                let val = Number.parseInt(e.target.value);
+                if (Number.isNaN(val)) val = 1;
+                if (val > product.countInStock || val < 1 ) return;
+                setQty(val);
               }}
               sx={{ width: "6em" }}
             />
