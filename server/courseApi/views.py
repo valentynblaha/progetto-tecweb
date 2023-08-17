@@ -106,3 +106,18 @@ class ImageUploadView(views.APIView):
             return Response({'message': 'Image uploaded successfully', "file": self.PATH + filename},
                             status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InstructorImageUploadView(views.APIView):
+    PATH = "images/profile_pictures/"
+
+    def post(self, request):
+        serializer = ImageUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            image = serializer.validated_data['image']
+            fs = FileSystemStorage(location=os.path.join(
+                settings.MEDIA_ROOT, self.PATH))
+            filename = fs.save(image.name, image)
+            return Response({'message': 'Image uploaded successfully', "file": self.PATH + filename},
+                            status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

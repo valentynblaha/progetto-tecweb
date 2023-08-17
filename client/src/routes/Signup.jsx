@@ -85,7 +85,6 @@ export default function Signup() {
               value={password}
               onChange={handleChange("password")}
             />
-            <TextField fullWidth label="Conferma Password" type="password" />
             <MuiFileInput
               accept="image/*"
               id="user-image"
