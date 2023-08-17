@@ -3,6 +3,7 @@ import api from '../api/api';
 import { Box, Button, Divider, Grid, Paper, Rating, Typography ,TextField,Select,FormControl,InputLabel,MenuItem} from "@mui/material";
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
+import LazyImg from '../utils/LazyImg';
 
 
 export const courseLoader = async ({ params }) => {
@@ -32,7 +33,7 @@ export default function CourseDetail() {
     <Box>
       <Grid container spacing={2} padding={2}>
         <Grid item xs={4}>
-          <img src={course.image} alt="Course image" className="w-100" />
+          <LazyImg src={course.image} alt="Course image" width="100%"/>
         </Grid>
         <Grid item xs={8} flexDirection="column">
           <div>

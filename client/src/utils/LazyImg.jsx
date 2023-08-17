@@ -18,7 +18,7 @@ export default function LazyImg({
           setLoaded(true);
           onLoad(e);
         }}
-        src={src}
+        src={src || "/public/placeholder.svg"}
         width={100}
         height={200}
         style={{ objectFit, width, height }}
