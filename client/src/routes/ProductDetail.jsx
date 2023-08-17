@@ -51,8 +51,8 @@ export default function ProductDetail() {
 
   return (
     <Box>
-      <Snackbar open={open} autoHideDuration={6000} onClose={setSnackbar({...snackbar, open: false})}>
-        <Alert onClose={setSnackbar({...snackbar, open: false})} severity="success" sx={{ width: '100%' }}>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}>
+        <Alert onClose={() => setSnackbar({...snackbar, open: false})} severity="success" sx={{ width: '100%' }}>
           This is a success message!
         </Alert>
       </Snackbar>

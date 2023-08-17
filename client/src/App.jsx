@@ -14,7 +14,7 @@ import ProductDetail, { productLoader } from "./routes/ProductDetail";
 import Products, { productsLoader } from "./routes/Products";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
-import SignupInstructor from "./routes/SignupInstructor";
+import SignupInstructor, { signupLoader } from "./routes/SignupInstructor";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +71,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup/instructor",
+    loader: signupLoader,
     element: <SignupInstructor />,
   },
 ]);
