@@ -20,7 +20,7 @@ export default function CourseDetail() {
   const navigate = useNavigate()
   const postData = async () => {
     const response = await api.post("api/course/subscriptions/",  {course: course.id} );
-    return response.json();
+    return response
   };
 
   const handleSubmit = (e) => {
