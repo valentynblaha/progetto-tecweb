@@ -45,15 +45,17 @@ export default function ProductDetail() {
   };
 
   const handleReview = (e) => {
+    setSnackbar({...snackbar, message: "Recensione aggiunta con successo", open: true})
     e.preventDefault()
     postReview()
   };
 
   return (
     <Box>
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}
+      anchorOrigin={{vertical: "top", horizontal: "center"}}>
         <Alert onClose={() => setSnackbar({...snackbar, open: false})} severity="success" sx={{ width: '100%' }}>
-          This is a success message!
+          {snackbar.message}
         </Alert>
       </Snackbar>
       <Grid container spacing={2} padding={2}>

@@ -19,8 +19,13 @@ export default function CourseDetail() {
   const {course , instructor} = useLoaderData()
   const navigate = useNavigate()
   const postData = async () => {
-    const response = await api.post("api/course/subscriptions/",  {course: course.id} );
-    return response
+    try {
+      await api.post("api/course/subscriptions/",  {course: course.id} );
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data.detail === "Subscription already exists") {
+        console.log("Already exists")
+      }
+    }
   };
 
   const handleSubmit = (e) => {
