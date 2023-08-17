@@ -46,6 +46,9 @@ class Review(models.Model):
     def __str__(self):
         return str(self.product.name + " " + self.user.email + " " + str(self.rating))
     
+    class Meta:
+        unique_together = ("user", "product")
+    
 class OrderProduct(models.Model):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)

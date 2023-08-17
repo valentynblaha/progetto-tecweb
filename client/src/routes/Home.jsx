@@ -33,7 +33,7 @@ export default function Home() {
 
   useEffect(() => {
     loadCourseSubs();
-  }, []);
+  }, [auth]);
 
   return (
     <div>
