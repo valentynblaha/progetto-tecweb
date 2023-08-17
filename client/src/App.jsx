@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
-import Root from "./routes/Root";
-import Home, { homeLoader } from "./routes/Home";
-import Products, { productsLoader } from "./routes/Products";
-import Login from "./routes/Login";
-import Signup from "./routes/Signup";
-import SignupInstructor from "./routes/SignupInstructor";
-import ErrorPage from "./components/ErrorPage";
-import ProductDetail, { productLoader } from "./routes/ProductDetail";
-import Courses, { coursesLoader } from "./routes/Courses";
-import EditCourse, { courseCreateAction, courseEditAction, newCourseLoader } from "./routes/EditCourse";
-import CourseDetail, { courseLoader } from "./routes/CourseDetail";
-import { AuthProvider } from "./context/AuthContext";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./App.css";
+import ErrorPage from "./components/ErrorPage";
+import { AuthProvider } from "./context/AuthContext";
+import CourseDetail, { courseLoader } from "./routes/CourseDetail";
+import Courses, { coursesLoader } from "./routes/Courses";
+import EditCourse, { courseCreateAction, courseEditAction, newCourseLoader } from "./routes/EditCourse";
+import Home, { homeLoader } from "./routes/Home";
+import Login from "./routes/Login";
+import ProductDetail, { productLoader } from "./routes/ProductDetail";
+import Products, { productsLoader } from "./routes/Products";
+import Root from "./routes/Root";
+import Signup from "./routes/Signup";
+import SignupInstructor from "./routes/SignupInstructor";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: homeLoader
+        loader: homeLoader,
       },
       {
         path: "/products",
@@ -49,9 +49,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/courses/create",
-        element: <EditCourse/>,
+        element: <EditCourse />,
         loader: newCourseLoader,
-        action: courseCreateAction
+        action: courseCreateAction,
       },
       {
         path: "/courses/:courseId/edit",

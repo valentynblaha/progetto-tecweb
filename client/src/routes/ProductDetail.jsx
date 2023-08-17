@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import api from "../api/api";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { Box, Button, Divider, Grid, Paper, Rating, TextField, Typography } from "@mui/material";
-import { AddShoppingCart } from "@mui/icons-material";
+import { Alert, Box, Button, Divider, Grid, Paper, Rating, Snackbar, TextField, Typography } from "@mui/material";
+import { AddShoppingCart, HandshakeOutlined } from "@mui/icons-material";
+import useAuth from "../hooks/useAuth"
 import "./ProductDetail.css";
 import CustomRating from "../components/CustomRating";
 import ReviewCard from "../components/ReviewCard";
@@ -17,12 +18,19 @@ export const productLoader = async ({ params }) => {
 
 export default function ProductDetail() {
   const navigate = useNavigate();
+  const [auth] = useAuth()
   const { product, reviews } = useLoaderData();
   const [value, setValue] = useState({
     name: "",
     rating: 0,
     comment: "",
   });
+
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "info",
+    open: false
+  })
 
   const { name, rating, comment } = value;
   const handleChange = (names, event) => {
@@ -36,16 +44,18 @@ export default function ProductDetail() {
     return response;
   };
 
-  const handleReview = () => {
-    if (isAuthenticated) {
-      const response = postReview();
-    } else {
-      navigate("/login");
-    }
+  const handleReview = (e) => {
+    e.preventDefault()
+    postReview()
   };
 
   return (
     <Box>
+      <Snackbar open={open} autoHideDuration={6000} onClose={setSnackbar({...snackbar, open: false})}>
+        <Alert onClose={setSnackbar({...snackbar, open: false})} severity="success" sx={{ width: '100%' }}>
+          This is a success message!
+        </Alert>
+      </Snackbar>
       <Grid container spacing={2} padding={2}>
         <Grid item xs={4}>
           <img src={product.image} alt="Product image" className="w-100" />
@@ -96,8 +106,8 @@ export default function ProductDetail() {
           </Paper>
         </Grid>
       </Grid>
-      <Paper sx={{ p: 2, m: 2 }}>
-        <Grid container rowGap={1}>
+      {auth.email && <Paper sx={{ p: 2, m: 2 }}>
+        <Grid container rowGap={1} component="form" onSubmit={handleReview}>
           <Grid item xs={12}>
             <TextField
               value={name}
@@ -105,6 +115,7 @@ export default function ProductDetail() {
               onChange={(e) => handleChange("name", e)}
               fullWidth
               label="Nome"
+              required
             ></TextField>
           </Grid>
           <Grid item xs={12}>
@@ -115,25 +126,27 @@ export default function ProductDetail() {
               rows={4}
               fullWidth
               label="Recensione"
+              required
             ></TextField>
           </Grid>
           <Grid item xs={12}>
             <Typography>Rating:</Typography>
             <Box>
               <Rating
-                value={rating}
+                value={rating / 2}
+                sx={{lineHeight: 1}}
                 precision={0.5}
-                onChange={(e, newValue) => setValue({ ...value, rating: newValue })}
+                onChange={(e, newValue) => setValue({ ...value, rating: newValue * 2 })}
               />
             </Box>
           </Grid>
           <Grid item xs={6}>
-            <Button variant="contained" onClick={handleReview}>
+            <Button variant="contained" type="submit">
               Insersci la recensione
             </Button>
           </Grid>
         </Grid>
-      </Paper>
+      </Paper>}
       <Divider />
       <Box>
         <Typography variant="h5" m={2}>
