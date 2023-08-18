@@ -37,7 +37,7 @@ export default function ProductDetail() {
     setValue({ ...value, [names]: event.target.value });
   };
 
-  let isAuthenticated = true;
+  
   const postReview = async () => {
     const response = await api.post("api/ecommerce/reviews/", { ...value, product: product.id });
     console.log(response);

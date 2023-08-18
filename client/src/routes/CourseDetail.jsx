@@ -1,15 +1,15 @@
 import React, { useState  } from 'react'
 import api from '../api/api';
-import { Box, Button, Divider, Grid, Paper, Rating, Typography ,TextField,Select,FormControl,InputLabel,MenuItem} from "@mui/material";
+import { Box, Button, Divider, Grid, Paper, Typography , Snackbar, Alert} from "@mui/material";
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import LazyImg from '../utils/LazyImg';
-
+import useAuth from "../hooks/useAuth"
 
 export const courseLoader = async ({ params }) => {
   const responseCourse = await api.get("api/course/course/" + params.courseId)
   const responseCategories = await api.get("api/course/fitnessCategory");
-  const idInstructor = (await responseCourse).data.instructor
+  const idInstructor = responseCourse.data.instructor
   const responseInstructor = await api.get("api/course/register_instructor/" + idInstructor)
   return { course: responseCourse.data, instructor: responseInstructor.data, categories: responseCategories.data };
 };
@@ -17,25 +17,42 @@ export const courseLoader = async ({ params }) => {
 
 export default function CourseDetail() {
   const {course , instructor} = useLoaderData()
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    severity: "info",
+    open: false
+  })
+  var conflictingCourse = null  
+  const [auth] = useAuth()
   const navigate = useNavigate()
   const postData = async () => {
     try {
       await api.post("api/course/subscriptions/",  {course: course.id} );
     } catch (error) {
-      if (error.response?.status === 400 && error.response?.data.detail === "Subscription already exists") {
-        console.log("Already exists")
+      if (error.response?.data.detail === "Subscription already exists") {
+        setSnackbar({...snackbar, message: "sei gia iscritto al corso", open: true})
+      }else if(error.response?.data.detail === "Authentication credentials were not provided.") {
+              navigate('/login')
       }
     }
   };
-
+  
+  
   const handleSubmit = (e) => {
-    const response = postData();
-    console.log(response)
+   
+    postData()
+   
   };
   
   return (
 
     <Box>
+       <Snackbar open={snackbar.open}  autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}
+        anchorOrigin={{vertical: "top", horizontal: "center"}}>
+        <Alert onClose={() => setSnackbar({...snackbar, open: false})} severity="error" sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <Grid container spacing={2} padding={2}>
         <Grid item xs={4}>
           <LazyImg src={course.image} alt="Course image" width="100%"/>
