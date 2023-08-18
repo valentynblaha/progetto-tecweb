@@ -22,10 +22,13 @@ class ProductsViewSet(ReadOnlyModelViewSet):
     serializer_class = ProductsSerializer
 
     def get_queryset(self):
+        s = self.request.query_params.get("s")
         minprice = self.request.query_params.get("minprice")
         maxprice = self.request.query_params.get("maxprice")
         sizes = self.request.query_params.get("sizes")
         query = {}
+        if s is not None:
+            query["name__icontains"] = s
         if (minprice is not None):
             try:
                 minprice_val = float(minprice)

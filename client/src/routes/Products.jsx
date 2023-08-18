@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useLoaderData, useSearchParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import ProductsTabPanel from "../components/ProductsTabPanel";
 import { CustomTabs, CustomTab } from "../utils/CustomTabs";
@@ -24,12 +24,9 @@ const SIZES = ["S", "M", "L", "XL"];
 
 export async function productsLoader({ request }) {
   const url = new URL(request.url);
-  const minPrice = url.searchParams.get("minprice");
-  const maxPrice = url.searchParams.get("maxprice");
-  const sizes = url.searchParams.get("sizes");
   const response = await Promise.all([
     api.get("/api/ecommerce/categories"),
-    api.get("/api/ecommerce/products?minprice=" + minPrice + "&maxprice=" + maxPrice + "&sizes=" + sizes),
+    api.get("/api/ecommerce/products" + url.search),
   ]);
   return { categories: response[0].data, products: response[1].data };
 }
@@ -41,6 +38,8 @@ export default function Products() {
 
   // Search state
   const [search, setSearch] = useState({
+    s: "",
+    isFiltered: false,
     minPrice: 0,
     maxPrice: 1000,
     sizes: SIZES,
@@ -57,7 +56,7 @@ export default function Products() {
 
   return (
     <Box display="flex">
-      <Box sx={{ flexShrink: 2 }}>
+      {search.isFiltered && <Box sx={{ flexShrink: 2 }}>
         <Grid container spacing={1} p={1}>
           <Grid item xs={12}>
             <Typography variant="h6">Filtri di ricerca:</Typography>
@@ -133,7 +132,7 @@ export default function Products() {
             />
           </Grid> */}
         </Grid>
-      </Box>
+      </Box>}
       <Box sx={{ width: "100%" }}>
         <Stack direction="row" p={2} spacing={2}>
           <Paper
@@ -141,18 +140,35 @@ export default function Products() {
             sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
             onSubmit={(e) => {
               e.preventDefault();
+              const params = new URLSearchParams();
+              if (search.s) params.append("s", search.s);
+              if (search.isFiltered) {
+                if (search.minPrice) params.append("minprice", search.minPrice);
+                if (search.maxPrice) params.append("maxprice", search.maxPrice);
+                if (search.sizes) params.append("sizes", search.sizes);
+              }
+              setSearchParams(params);
             }}
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder="Cerca prodotto"
               inputProps={{ "aria-label": "cerca prodotto" }}
+              value={search.s}
+              onChange={(e) => setSearch({ ...search, s: e.target.value })}
             />
             <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
               <Search />
             </IconButton>
           </Paper>
-          <FormControlLabel label="Filtro avanzato" control={<Checkbox />} />
+          <FormControlLabel
+            label="Filtro avanzato"
+            control={<Checkbox />}
+            checked={search.isFiltered}
+            onChange={(e) => {
+              setSearch({ ...search, isFiltered: e.target.checked });
+            }}
+          />
         </Stack>
 
         <Box>
