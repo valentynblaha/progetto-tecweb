@@ -15,6 +15,7 @@ import Products, { productsLoader } from "./routes/Products";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
 import SignupInstructor, { signupLoader } from "./routes/SignupInstructor";
+import Cart, { cartLoader } from "./routes/Cart";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
         element: <EditCourse />,
         action: courseEditAction,
       },
+      {
+        path: "/cart",
+        loader: cartLoader,
+        element: <Cart/>
+      }
     ],
   },
   {

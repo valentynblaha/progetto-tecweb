@@ -146,7 +146,7 @@ export default function Root() {
             {auth.email && (
               <Box flexGrow={0} display="flex">
                 <Tooltip title="Carrello">
-                  <IconButton onClick={() => null} sx={{ p: 0, marginLeft: 2 }}>
+                  <IconButton component={LinkBehavior} to="/cart" sx={{ p: 0, marginLeft: 2 }}>
                     <Badge
                       badgeContent={1}
                       sx={{

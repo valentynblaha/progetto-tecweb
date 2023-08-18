@@ -49,20 +49,8 @@ class Review(models.Model):
     class Meta:
         unique_together = ("user", "product")
     
-class OrderProduct(models.Model):
-    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
-    orderedProduct = models.BooleanField(default=False)
-    quantity = models.IntegerField(default=1)
-
-    def __str__(self):
-        return str(self.quantity + " of " + self.product)
-    def get_total_price(self):
-        return self.quantity * self.product.price
-    
 class Cart(models.Model):
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    products = models.ManyToManyField(OrderProduct)
     createdAt = models.DateTimeField(auto_now_add=True)
     ordered = models.BooleanField(default=False)
     deliveredAt = models.DateTimeField(null=True)
@@ -70,14 +58,29 @@ class Cart(models.Model):
     payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
     def get_total(self):
-        total = 0
-        for order_product in self.products.all():
-            total += order_product.get_total_price()
-        return total
+        total_price = 0
+        ordered_products = OrderProduct.objects.filter(cart=self)
 
+        for order_product in ordered_products:
+            total_price += order_product.get_total_price()
+
+        return total_price
+
+class OrderProduct(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+    orderedProduct = models.BooleanField(default=False)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return str(self.quantity) + " of " + str(self.product)
+    
+    def get_total_price(self):
+        return self.quantity * self.product.price
+    
 class Payment(models.Model):
     cardNumber = models.CharField(max_length=50)
     user = models.ForeignKey(User,on_delete=models.SET_NULL, blank=True, null=True)
@@ -85,5 +88,5 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
