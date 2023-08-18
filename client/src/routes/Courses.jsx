@@ -33,13 +33,15 @@ export default function Courses() {
     <Box sx={{ width: "100%" }}>
       {auth.is_instructor && (
         <>
-        <div style={{marginTop: "1em", marginLeft: "1em", display: "flex", alignItems: "center"}}>
-        <Typography variant="h5" component="span" >
-            Corsi insegnati
-          </Typography>
-          <Button component={LinkBehavior} to="create" variant="contained" startIcon={<Add/>} sx={{mx: 2}}>Aggiungi corso</Button>
-        </div>
-          
+          <div style={{ marginTop: "1em", marginLeft: "1em", display: "flex", alignItems: "center" }}>
+            <Typography variant="h5" component="span">
+              Corsi insegnati
+            </Typography>
+            <Button component={LinkBehavior} to="create" variant="contained" startIcon={<Add />} sx={{ mx: 2 }}>
+              Aggiungi corso
+            </Button>
+          </div>
+
           <Divider />
           <div style={{ margin: "0.5em", overflowX: "auto", display: "flex" }}>
             {myCourses.map((course) => (

@@ -1,9 +1,21 @@
 import React, { useContext, useState } from "react";
 import api from "../api/api";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { Alert, Box, Button, Divider, Grid, Paper, Rating, Snackbar, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Paper,
+  Rating,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { AddShoppingCart, HandshakeOutlined } from "@mui/icons-material";
-import useAuth from "../hooks/useAuth"
+import useAuth from "../hooks/useAuth";
 import "./ProductDetail.css";
 import CustomRating from "../components/CustomRating";
 import ReviewCard from "../components/ReviewCard";
@@ -18,9 +30,9 @@ export const productLoader = async ({ params }) => {
 
 export default function ProductDetail() {
   const navigate = useNavigate();
-  const [auth] = useAuth()
+  const [auth] = useAuth();
   const { product, reviews } = useLoaderData();
-  const [value, setValue] = useState({
+  const [review, setReview] = useState({
     name: "",
     rating: 0,
     comment: "",
@@ -28,33 +40,49 @@ export default function ProductDetail() {
 
   const [snackbar, setSnackbar] = useState({
     message: "",
-    severity: "info",
-    open: false
-  })
+    severity: "success",
+    open: false,
+  });
 
-  const { name, rating, comment } = value;
+  const [qty, setQty] = useState(1);
+  const { name, rating, comment } = review;
   const handleChange = (names, event) => {
-    setValue({ ...value, [names]: event.target.value });
+    setReview({ ...review, [names]: event.target.value });
   };
 
-  
   const postReview = async () => {
-    const response = await api.post("api/ecommerce/reviews/", { ...value, product: product.id });
-    console.log(response);
-    return response;
+    try {
+      const response = await api.post("api/ecommerce/reviews/", { ...review, product: product.id });
+      if (response.status === 201) {
+        setReview({ name: "", rating: 0, comment: "" });
+        setSnackbar({ severity: "success", message: "Recensione aggiunta con successo", open: true });
+      }
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data.code === 1)
+        setSnackbar({ severity: "error", message: "Esiste già una tua recensione per questo prodotto", open: true });
+    }
   };
 
   const handleReview = (e) => {
-    setSnackbar({...snackbar, message: "Recensione aggiunta con successo", open: true})
-    e.preventDefault()
-    postReview()
+    e.preventDefault();
+    postReview();
   };
 
   return (
     <Box>
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}
-      anchorOrigin={{vertical: "top", horizontal: "center"}}>
-        <Alert onClose={() => setSnackbar({...snackbar, open: false})} severity="success" sx={{ width: '100%' }}>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          elevation={6}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -87,10 +115,24 @@ export default function ProductDetail() {
           <Typography fontSize="2rem" fontWeight="bold" sx={{ my: 2 }}>
             € {product.price}
           </Typography>
-          <Button size="large" startIcon={<AddShoppingCart />} variant="outlined">
-            Aggiungi al carrello
-          </Button>
-
+          <Stack direction="row" spacing={2}>
+            <TextField
+              type="number"
+              value={qty}
+              label="Quantità"
+              variant="outlined"
+              onChange={(e) => {
+                let val = Number.parseInt(e.target.value);
+                if (Number.isNaN(val)) val = 1;
+                if (val > product.countInStock || val < 1 ) return;
+                setQty(val);
+              }}
+              sx={{ width: "6em" }}
+            />
+            <Button size="large" startIcon={<AddShoppingCart />} variant="contained">
+              Aggiungi al carrello
+            </Button>
+          </Stack>
           <Paper sx={{ p: 1, my: 1 }}>
             <Typography color="#808080">Dettagli:</Typography>
             <table className="product-details-table">
@@ -108,47 +150,49 @@ export default function ProductDetail() {
           </Paper>
         </Grid>
       </Grid>
-      {auth.email && <Paper sx={{ p: 2, m: 2 }}>
-        <Grid container rowGap={1} component="form" onSubmit={handleReview}>
-          <Grid item xs={12}>
-            <TextField
-              value={name}
-              size="small"
-              onChange={(e) => handleChange("name", e)}
-              fullWidth
-              label="Nome"
-              required
-            ></TextField>
+      {auth.email && (
+        <Paper sx={{ p: 2, m: 2 }}>
+          <Grid container rowGap={1} component="form" onSubmit={handleReview}>
+            <Grid item xs={12}>
+              <TextField
+                value={name}
+                size="small"
+                onChange={(e) => handleChange("name", e)}
+                fullWidth
+                label="Nome"
+                required
+              ></TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                value={comment}
+                onChange={(e) => handleChange("comment", e)}
+                multiline
+                rows={4}
+                fullWidth
+                label="Recensione"
+                required
+              ></TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>Rating:</Typography>
+              <Box>
+                <Rating
+                  value={rating / 2}
+                  sx={{ lineHeight: 1 }}
+                  precision={0.5}
+                  onChange={(e, newValue) => setReview({ ...review, rating: newValue * 2 })}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="contained" type="submit">
+                Insersci la recensione
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              value={comment}
-              onChange={(e) => handleChange("comment", e)}
-              multiline
-              rows={4}
-              fullWidth
-              label="Recensione"
-              required
-            ></TextField>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography>Rating:</Typography>
-            <Box>
-              <Rating
-                value={rating / 2}
-                sx={{lineHeight: 1}}
-                precision={0.5}
-                onChange={(e, newValue) => setValue({ ...value, rating: newValue * 2 })}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Button variant="contained" type="submit">
-              Insersci la recensione
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>}
+        </Paper>
+      )}
       <Divider />
       <Box>
         <Typography variant="h5" m={2}>

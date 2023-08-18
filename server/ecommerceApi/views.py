@@ -129,17 +129,22 @@ class ReviewView(ViewSet):
      def create(self, request):
         product_id = request.data.get("product", None)
         if product_id is not None:
-            product_reviewed = get_object_or_404(Product,id=product_id)
-            review = Review.objects.create(
-                product=product_reviewed,
-                user = request.user,
-                name = request.data.get('name',None),
-                rating = request.data.get('rating',None),
-                comment = request.data.get('comment',None)
-            )
-            product_reviewed.save()
-            serializer = ReviewsSerializer(review)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
+            try:
+                product_reviewed = get_object_or_404(Product, id=product_id)
+                review = Review.objects.create(
+                    product=product_reviewed,
+                    user=request.user,
+                    name=request.data.get('name', None),
+                    rating=request.data.get('rating', None),
+                    comment=request.data.get('comment', None)
+                )
+                product_reviewed.save()
+                serializer = ReviewsSerializer(review)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except IntegrityError:
+                return Response(
+                    {"detail": "Failed to create the review due to integrity violation.", "code": 1},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         else:
             return Response({"detail": "You need to provide a product"}, status=status.HTTP_400_BAD_REQUEST)
