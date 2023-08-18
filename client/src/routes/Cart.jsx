@@ -3,7 +3,7 @@ import api from "../api/api";
 import { useLoaderData } from "react-router-dom";
 
 export const cartLoader = async () => {
-  const response = await Promise.all([api.get("/api/ecommerce/order_summary")]);
+  const response = await Promise.all([api.get("/api/ecommerce/orders")]);
   return { orders: response[0].data };
 };
 

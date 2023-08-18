@@ -24,19 +24,12 @@ import useAuth from "../hooks/useAuth";
 
 export default function Root() {
   const navigation = useNavigation();
-  const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElRegistration, setAnchorElRegistration] = useState(null);
   const [auth, setAuth] = useAuth();
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
@@ -106,8 +99,8 @@ export default function Root() {
                 <Tooltip title="Opzioni utente">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      alt="Remy Sharp"
-                      src="http://localhost:8000/media/images/profilepictures/stock_profile_img.jpg"
+                      alt="Profile picture"
+                      src={auth.image}
                     />
                   </IconButton>
                 </Tooltip>
@@ -132,7 +125,7 @@ export default function Root() {
                       localStorage.removeItem("accesstoken");
                       localStorage.removeItem("refreshtoken");
                       setAuth({});
-                      window.location.href = "/"
+                      window.location.href = "/";
                     }}
                   >
                     <ListItemIcon>
@@ -152,7 +145,7 @@ export default function Root() {
                       sx={{
                         "& .MuiBadge-badge": {
                           backgroundColor: "#ff7588",
-                          boxShadow: "1px 1px 1px #00000054"
+                          boxShadow: "1px 1px 1px #00000054",
                         },
                       }}
                     >
@@ -163,17 +156,40 @@ export default function Root() {
               </Box>
             )}
             {!auth.email && (
-              <Button
-                component={LinkBehavior}
-                to="/login"
-                sx={{
-                  my: 2,
-                  color: "white",
-                  display: "block",
-                }}
-              >
-                Accedi
-              </Button>
+              <>
+                <Button component={LinkBehavior} to="/login" sx={{ my: 2, color: "white", display: "block" }}>
+                  Accedi
+                </Button>
+                <Button
+                  sx={{ my: 2, color: "white", display: "block" }}
+                  onClick={(e) => setAnchorElRegistration(e.currentTarget)}
+                >
+                  Registrati
+                </Button>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElRegistration}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElRegistration)}
+                  onClose={() => setAnchorElRegistration(null)}
+                >
+                  <MenuItem component={LinkBehavior} to="/signup/user">
+                    Come Utente
+                  </MenuItem>
+                  <MenuItem component={LinkBehavior} to="/signup/instructor">
+                    Come Istruttore
+                  </MenuItem>
+                </Menu>
+              </>
             )}
           </Toolbar>
         </Container>

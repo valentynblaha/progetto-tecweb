@@ -8,15 +8,16 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework import status
 from rest_framework.generics import *
-from rest_framework.permissions import *
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 
 from .models import *
-from .serializers import (OrderSerializer, ProductCategorySerializer,
-                          ProductsSerializer, ReviewsSerializer, OrderedProductsSerializer, PaymentSerializer)
+from .serializers import (OrderedProductsSerializer, OrderSerializer,
+                          PaymentSerializer, ProductCategorySerializer,
+                          ProductsSerializer, ReviewsSerializer)
 
 
 class ProductsViewSet(ReadOnlyModelViewSet):
@@ -113,8 +114,9 @@ class OrderViewSet(ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
-        cart = Cart.objects.filter(user=self.request.user, ordered=False)[0]
-        if cart is not None:
+        carts = Cart.objects.filter(user=self.request.user, ordered=False)
+        if len(carts) > 0:
+            cart = carts[0]
             queryset = OrderProduct.objects.filter(cart=cart)
             serializer = self.serializer(queryset, many=True)
             return Response(serializer.data)
@@ -127,8 +129,8 @@ class OrderViewSet(ViewSet):
         product = Product.objects.get(id=product_id)
         if product.countInStock < quantity:
             return Response({"detail": "Out of stock", "code": 1}, status=status.HTTP_400_BAD_REQUEST)
-        cart = Cart.objects.filter(user=request.user, ordered=False)[0]
-        if cart is None:
+        carts = Cart.objects.filter(user=request.user, ordered=False)
+        if len(carts) == 0:
             cart = Cart.objects.create(user=request.user, ordered=False)
             order = OrderProduct.objects.create(
                 cart=cart, product=product, orderedProduct=False, quantity=quantity)
@@ -137,6 +139,7 @@ class OrderViewSet(ViewSet):
             product.save()
             return Response(serializer.data)
         else:
+            cart = carts[0]
             orders = OrderProduct.objects.filter(cart=cart, product=product)
             if len(orders) > 0:
                 order = orders[0]
