@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import ProductsTabPanel from "../components/ProductsTabPanel";
 import { CustomTabs, CustomTab } from "../utils/CustomTabs";
@@ -22,14 +22,22 @@ import CustomRating from "../components/CustomRating";
 
 const SIZES = ["S", "M", "L", "XL"];
 
-export async function productsLoader() {
-  const response = await Promise.all([api.get("/api/ecommerce/categories"), api.get("/api/ecommerce/products")]);
+export async function productsLoader({ request }) {
+  const url = new URL(request.url);
+  const minPrice = url.searchParams.get("minprice");
+  const maxPrice = url.searchParams.get("maxprice");
+  const sizes = url.searchParams.get("sizes");
+  const response = await Promise.all([
+    api.get("/api/ecommerce/categories"),
+    api.get("/api/ecommerce/products?minprice=" + minPrice + "&maxprice=" + maxPrice + "&sizes=" + sizes),
+  ]);
   return { categories: response[0].data, products: response[1].data };
 }
 
 export default function Products() {
   const [currentTab, setCurrentTab] = useState(Number.parseInt(localStorage.getItem("curTab")) || 0);
   const { categories, products } = useLoaderData();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Search state
   const [search, setSearch] = useState({
@@ -116,14 +124,14 @@ export default function Products() {
               ))}
             </Stack>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Divider />
             <Typography fontWeight="bold">Rating minimo</Typography>
             <CustomRating
               value={search.minRating}
               onChange={(_, val) => setSearch({ ...search, minRating: val * 2 })}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
       <Box sx={{ width: "100%" }}>

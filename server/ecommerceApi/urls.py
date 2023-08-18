@@ -3,7 +3,7 @@ from rest_framework import routers
 from .views import ProductsViewSet, AddToCartView, OrderDetailView, Checkout, ProductQuantityUpdateView, ProductCategoriesViewSet,ReviewView
 
 router = routers.SimpleRouter()
-router.register("products", ProductsViewSet)
+router.register("products", ProductsViewSet, basename="products")
 router.register("categories", ProductCategoriesViewSet)
 router.register("reviews", ReviewView, basename="reviews")
 
