@@ -19,6 +19,7 @@ import useAuth from "../hooks/useAuth";
 import "./ProductDetail.css";
 import CustomRating from "../components/CustomRating";
 import ReviewCard from "../components/ReviewCard";
+import useSnackbar from "../hooks/useSnackbar";
 
 export const productLoader = async ({ params }) => {
   const response = await Promise.all([
@@ -38,11 +39,7 @@ export default function ProductDetail() {
     comment: "",
   });
 
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "success",
-    open: false,
-  });
+  const setSnackbar = useSnackbar()
 
   const [qty, setQty] = useState(1);
   const { name, rating, comment } = review;
@@ -68,24 +65,21 @@ export default function ProductDetail() {
     postReview();
   };
 
+  const addToCart = async () => {
+    try {
+      const response = await api.post("api/ecommerce/orders/", { product: product.id, quantity: qty})
+      if (response.status === 201) {
+        setSnackbar({ severity: "success", message: "Prodotto aggiunto al carrello", open: true });
+      }
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data.code === 1) {
+        setSnackbar({ severity: "error", message: "La quantità richiesta non è disponibile", open: true });
+      }
+    }
+  }
+
   return (
     <Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          elevation={6}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
       <Grid container spacing={2} padding={2}>
         <Grid item xs={4}>
           <img src={product.image} alt="Product image" className="w-100" />
@@ -129,7 +123,9 @@ export default function ProductDetail() {
               }}
               sx={{ width: "6em" }}
             />
-            <Button size="large" startIcon={<AddShoppingCart />} variant="contained">
+            <Button size="large" startIcon={<AddShoppingCart />} variant="contained" onClick={() => {
+              addToCart()
+            }}>
               Aggiungi al carrello
             </Button>
           </Stack>
