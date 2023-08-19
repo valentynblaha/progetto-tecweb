@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import { Link, Outlet, useNavigation } from "react-router-dom";
 import {
   AppBar,
@@ -21,12 +21,14 @@ import {
 import { Menu as MenuIcon, Logout, ShoppingCart } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
 import useAuth from "../hooks/useAuth";
+import useCart from "../hooks/useCart";
 
 export default function Root() {
   const navigation = useNavigation();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElRegistration, setAnchorElRegistration] = useState(null);
   const [auth, setAuth] = useAuth();
+  const {cart, update} = useCart()
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -35,6 +37,10 @@ export default function Root() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  useEffect(() => {
+    update()
+  }, [])
 
   return (
     <>
@@ -100,7 +106,7 @@ export default function Root() {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Profile picture"
-                      src={auth.image}
+                      src={auth.image[0] === "/" ? "http://localhost:8000" + auth.image : auth.image}
                     />
                   </IconButton>
                 </Tooltip>
@@ -141,11 +147,12 @@ export default function Root() {
                 <Tooltip title="Carrello">
                   <IconButton component={LinkBehavior} to="/cart" sx={{ p: 0, marginLeft: 2 }}>
                     <Badge
-                      badgeContent={1}
+                      badgeContent={cart}
                       sx={{
                         "& .MuiBadge-badge": {
-                          backgroundColor: "#ff7588",
+                          backgroundColor: "#ff0e2f",
                           boxShadow: "1px 1px 1px #00000054",
+                          color: "white"
                         },
                       }}
                     >

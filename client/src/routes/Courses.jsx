@@ -1,13 +1,18 @@
-import { Box, Button, Divider, Grid, List, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Link, useLoaderData } from "react-router-dom";
-import api from "../api/api";
-import CoursesTabPanel from "../components/CoursesTabPanel";
-import { CustomTab, CustomTabs } from "../utils/CustomTabs";
-import useAuth from "../hooks/useAuth";
-import CourseCard from "../components/CourseCard";
-import LinkBehavior from "../utils/LinkBehaviour";
 import { Add } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Divider,
+  Typography
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import api from "../api/api";
+import CourseCard from "../components/CourseCard";
+import CoursesTabPanel from "../components/CoursesTabPanel";
+import useAuth from "../hooks/useAuth";
+import { CustomTab, CustomTabs } from "../utils/CustomTabs";
+import LinkBehavior from "../utils/LinkBehaviour";
 
 export async function coursesLoader() {
   const response = await Promise.all([api.get("/api/course/fitnessCategory"), api.get("/api/course/course")]);

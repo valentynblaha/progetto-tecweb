@@ -20,6 +20,7 @@ import "./ProductDetail.css";
 import CustomRating from "../components/CustomRating";
 import ReviewCard from "../components/ReviewCard";
 import useSnackbar from "../hooks/useSnackbar";
+import useCart from "../hooks/useCart";
 
 export const productLoader = async ({ params }) => {
   const response = await Promise.all([
@@ -30,8 +31,8 @@ export const productLoader = async ({ params }) => {
 };
 
 export default function ProductDetail() {
-  const navigate = useNavigate();
   const [auth] = useAuth();
+  const {update} = useCart()
   const { product, reviews } = useLoaderData();
   const [review, setReview] = useState({
     name: "",
@@ -69,6 +70,7 @@ export default function ProductDetail() {
     try {
       const response = await api.post("api/ecommerce/orders/", { product: product.id, quantity: qty})
       if (response.status === 201) {
+        update()
         setSnackbar({ severity: "success", message: "Prodotto aggiunto al carrello", open: true });
       }
     } catch (error) {

@@ -6,16 +6,19 @@ import LinkBehavior from "../utils/LinkBehaviour";
 import CustomRating from "./CustomRating";
 import useSnackbar from "../hooks/useSnackbar";
 import api from "../api/api";
+import useCart from "../hooks/useCart";
 
 export default function ProductCard({ product }) {
 
   const setSnackbar = useSnackbar()
+  const {update} = useCart()
 
   const handleAddToCart = async() => {
     try {
       const response = await api.post("api/ecommerce/orders/", { product: product.id, quantity: 1})
       if (response.status === 201) {
         setSnackbar({ severity: "success", message: "Prodotto aggiunto al carrello", open: true });
+        update()
       }
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data.code === 1) {

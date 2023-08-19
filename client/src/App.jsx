@@ -17,6 +17,7 @@ import Signup from "./routes/Signup";
 import SignupInstructor, { signupLoader } from "./routes/SignupInstructor";
 import Cart, { cartLoader } from "./routes/Cart";
 import { SnackbarProvider } from "./context/SnackbarContext";
+import { CartProvider } from "./context/CartContext";
 
 const router = createBrowserRouter([
   {
@@ -87,9 +88,11 @@ function App() {
   return (
     <AuthProvider>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <SnackbarProvider>
-          <RouterProvider router={router} />
-        </SnackbarProvider>
+        <CartProvider>
+          <SnackbarProvider>
+            <RouterProvider router={router} />
+          </SnackbarProvider>
+        </CartProvider>
       </LocalizationProvider>
     </AuthProvider>
   );

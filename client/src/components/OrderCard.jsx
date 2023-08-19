@@ -1,10 +1,8 @@
-import { AddShoppingCart } from "@mui/icons-material";
-import { Button, Card, CardActionArea, CardContent, Grid, Typography } from "@mui/material";
+import { Button, Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import React from "react";
 import LazyImg from "../utils/LazyImg";
 import LinkBehavior from "../utils/LinkBehaviour";
 import CustomRating from "./CustomRating";
-import api from "../api/api";
 
 export default function OrderCard({ order, product, onRemove }) {
 

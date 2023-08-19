@@ -166,3 +166,21 @@ class OrderViewSet(ViewSet):
         else:
             return Response({"detail": "Cannot delete a closed order", "code": 1}, status=status.HTTP_403_FORBIDDEN)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CartView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return the count of products in the cart
+        """
+        user = request.user
+        if user.is_anonymous:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        carts = Cart.objects.filter(user=user, ordered=False)
+        if len(carts) > 0:
+            cart = carts[0]
+            return Response(cart.get_product_count(), status=status.HTTP_200_OK)
+        else:
+            return Response(0, status=status.HTTP_200_OK)
