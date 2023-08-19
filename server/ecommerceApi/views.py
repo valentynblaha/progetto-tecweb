@@ -2,15 +2,16 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import *
-from rest_framework.permissions import *
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet,ModelViewSet
 
 from .models import *
-from .serializers import ( ProductCategorySerializer,ProductsSerializer,
-                           ReviewsSerializer, OrderedProductsSerializer, PaymentSerializer)
+from .serializers import (OrderedProductsSerializer,
+                          PaymentSerializer, ProductCategorySerializer,
+                          ProductsSerializer, ReviewsSerializer)
 
 
 class ProductsViewSet(ReadOnlyModelViewSet):
@@ -107,8 +108,9 @@ class OrderViewSet(ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
-        cart = Cart.objects.filter(user=self.request.user, ordered=False)[0]
-        if cart is not None:
+        carts = Cart.objects.filter(user=self.request.user, ordered=False)
+        if len(carts) > 0:
+            cart = carts[0]
             queryset = OrderProduct.objects.filter(cart=cart)
             serializer = self.serializer(queryset, many=True)
             return Response(serializer.data)
@@ -121,16 +123,17 @@ class OrderViewSet(ViewSet):
         product = Product.objects.get(id=product_id)
         if product.countInStock < quantity:
             return Response({"detail": "Out of stock", "code": 1}, status=status.HTTP_400_BAD_REQUEST)
-        cart = Cart.objects.filter(user=request.user, ordered=False)[0]
-        if cart is None:
+        carts = Cart.objects.filter(user=request.user, ordered=False)
+        if len(carts) == 0:
             cart = Cart.objects.create(user=request.user, ordered=False)
             order = OrderProduct.objects.create(
                 cart=cart, product=product, orderedProduct=False, quantity=quantity)
             serializer = self.serializer(order)
             product.countInStock -= quantity
             product.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            cart = carts[0]
             orders = OrderProduct.objects.filter(cart=cart, product=product)
             if len(orders) > 0:
                 order = orders[0]
@@ -138,14 +141,14 @@ class OrderViewSet(ViewSet):
                 order.save()
                 product.countInStock -= quantity
                 product.save()
-                return Response(self.serializer(order).data)
+                return Response(self.serializer(order).data, status=status.HTTP_201_CREATED)
             else:
                 order = OrderProduct.objects.create(
                     cart=cart, product=product, orderedProduct=False, quantity=quantity)
                 serializer = self.serializer(order)
                 product.countInStock -= quantity
                 product.save()
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, pk=None):
         order = get_object_or_404(OrderProduct, pk=pk)
@@ -157,3 +160,21 @@ class OrderViewSet(ViewSet):
         else:
             return Response({"detail": "Cannot delete a closed order", "code": 1}, status=status.HTTP_403_FORBIDDEN)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CartView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Return the count of products in the cart
+        """
+        user = request.user
+        if user.is_anonymous:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        carts = Cart.objects.filter(user=user, ordered=False)
+        if len(carts) > 0:
+            cart = carts[0]
+            return Response(cart.get_product_count(), status=status.HTTP_200_OK)
+        else:
+            return Response(0, status=status.HTTP_200_OK)

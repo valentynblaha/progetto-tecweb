@@ -31,23 +31,9 @@ export default function CourseCard({ course, width, instructor_view = false }) {
         </div>
         <div>
           {instructor_view ? (
-            <>
-            <Button
-              startIcon={<Edit />}
-              variant="outlined"
-              component={LinkBehavior}
-              to={`${course.id}/edit`}
-            >
+            <Button startIcon={<Edit />} variant="outlined" component={LinkBehavior} to={`${course.id}/edit`}>
               Modifica
             </Button>
-            <IconButton
-              variant="contained"
-              color="error"
-              sx={{marginLeft: 1}}
-            >
-              <Delete/>
-            </IconButton>
-            </>
           ) : (
             <Button variant="outlined" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
               Iscriviti

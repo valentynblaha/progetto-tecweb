@@ -50,6 +50,7 @@ class OrderedProductsSerializer(serializers.ModelSerializer):
     def get_total_price(self, obj):
         return obj.get_total_price()
 
+
 class ReviewsSerializer(serializers.ModelSerializer):
 
     user = UserPublicSerializer()
@@ -64,3 +65,9 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ('id', 'user', 'amount', 'timestamp')
+
+class CartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cart
+        fields = ('id', 'total', 'product_count')

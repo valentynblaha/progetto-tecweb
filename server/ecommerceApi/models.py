@@ -68,6 +68,10 @@ class Cart(models.Model):
             total_price += order_product.get_total_price()
 
         return total_price
+    
+    def get_product_count(self):
+        ordered_products = OrderProduct.objects.filter(cart=self)
+        return len(ordered_products)
 
 class OrderProduct(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
