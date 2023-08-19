@@ -5,6 +5,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import LazyImg from '../utils/LazyImg';
 import useAuth from "../hooks/useAuth"
+import '../api/format';
 
 export const courseLoader = async ({ params }) => {
   const responseCourse = await api.get("api/course/course/" + params.courseId)
@@ -37,9 +38,36 @@ export default function CourseDetail() {
     }
   };
   
+  const getSubscriptions = async () =>{
+    const id1 = auth.id
+    const response = await Promise.all([
+     await api.get("api/course/subscriptions/", {id:id1}),
+     await api.get("api/course/course/"),
+     await api.get("api/course/course/" ,course.courseid),
+    ]);
+    console.log(response[0].data)
+    console.log(response[1].data)
+    console.log(response[2].data)
+
+    return { subscriptions: response[0].data, schedule: response[1].data.schedule, newSchedule: response[2].data.schedule };
+  }
   
+  const handleSubscription = () =>{
+    const {subscriptions , schedule , newSchedule} = getSubscriptions()
+    /**
+     * Checks if 2 Schedule days overlap
+     * @param {ScheduleDay} a
+     * @param {ScheduleDay} b
+     * 
+     */
+
+  }
+
   const handleSubmit = (e) => {
-   
+   // handleSubscription();
+    if (conflictingCourse != null){
+       console.log("gia fatto")
+    }
     postData()
    
   };

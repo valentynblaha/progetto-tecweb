@@ -1,22 +1,16 @@
-import os
-
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Q
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import *
 from rest_framework.permissions import *
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet,ModelViewSet
 
 from .models import *
-from .serializers import (OrderSerializer, ProductCategorySerializer,
-                          ProductsSerializer, ReviewsSerializer, OrderedProductsSerializer, PaymentSerializer)
+from .serializers import ( ProductCategorySerializer,ProductsSerializer,
+                           ReviewsSerializer, OrderedProductsSerializer, PaymentSerializer)
 
 
 class ProductsViewSet(ReadOnlyModelViewSet):
