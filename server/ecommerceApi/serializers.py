@@ -51,21 +51,6 @@ class OrderedProductsSerializer(serializers.ModelSerializer):
         return obj.get_total_price()
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    ordered_products = serializers.SerializerMethodField()
-    total = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Cart
-        fields = ['id', 'ordered_products', 'total', 'shippingAddress']
-
-    def get_ordered_products(self, obj):
-        return OrderedProductsSerializer(obj.products.all(), many=True).data
-
-    def get_total(self, obj):
-        return obj.get_total()
-
-
 class ReviewsSerializer(serializers.ModelSerializer):
 
     user = UserPublicSerializer()

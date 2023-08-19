@@ -58,7 +58,7 @@ class Cart(models.Model):
     payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
-        return self.user.email
+        return "Cart with id: " + str(self.id) + " of " + str(self.user)
 
     def get_total(self):
         total_price = 0

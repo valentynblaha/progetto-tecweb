@@ -5,7 +5,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ("product", "user", "rating")
 
 class OrderProductAdmin(admin.ModelAdmin):
-    list_display= ( "quantity", "product")
+    list_display= ("cart", "quantity", "product", "orderedProduct")
 
 admin.site.register(ProductCategory)
 admin.site.register(Product)

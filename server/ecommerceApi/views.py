@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 
 from .models import *
-from .serializers import (OrderedProductsSerializer, OrderSerializer,
+from .serializers import (OrderedProductsSerializer,
                           PaymentSerializer, ProductCategorySerializer,
                           ProductsSerializer, ReviewsSerializer)
 
@@ -137,7 +137,7 @@ class OrderViewSet(ViewSet):
             serializer = self.serializer(order)
             product.countInStock -= quantity
             product.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             cart = carts[0]
             orders = OrderProduct.objects.filter(cart=cart, product=product)
@@ -147,14 +147,14 @@ class OrderViewSet(ViewSet):
                 order.save()
                 product.countInStock -= quantity
                 product.save()
-                return Response(self.serializer(order).data)
+                return Response(self.serializer(order).data, status=status.HTTP_201_CREATED)
             else:
                 order = OrderProduct.objects.create(
                     cart=cart, product=product, orderedProduct=False, quantity=quantity)
                 serializer = self.serializer(order)
                 product.countInStock -= quantity
                 product.save()
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, pk=None):
         order = get_object_or_404(OrderProduct, pk=pk)
