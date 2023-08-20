@@ -29,9 +29,7 @@ class ProductsSerializer(serializers.ModelSerializer):
         return Review.objects.filter(product_id=obj.pk).count()
 
     def get_rating(self, obj):
-        aggregate = Review.objects.filter(
-            product_id=obj.pk).aggregate(avg=Avg("rating"))
-        return round(aggregate["avg"] or 0)
+        return obj.get_rating()
 
 
 class OrderedProductsSerializer(serializers.ModelSerializer):

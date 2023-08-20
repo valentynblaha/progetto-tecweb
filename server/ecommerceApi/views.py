@@ -12,7 +12,8 @@ from .models import *
 from .serializers import (OrderedProductsSerializer,
                           PaymentSerializer, ProductCategorySerializer,
                           ProductsSerializer, ReviewsSerializer)
-
+import numpy as np
+from sklearn.decomposition import TruncatedSVD
 
 class ProductsViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
@@ -178,3 +179,57 @@ class CartView(APIView):
             return Response(cart.get_product_count(), status=status.HTTP_200_OK)
         else:
             return Response(0, status=status.HTTP_200_OK)
+        
+
+class RecommendedView(APIView):
+
+    def get(self, request, format=None):
+        reviews = Review.objects.all()
+        user_orders = [order for order in OrderProduct.objects.select_related('cart').filter(cart__user=request.user)] if not request.user.is_anonymous else []
+        user_products = set(order.product for order in user_orders)
+        users = {user: index for index, user in enumerate(set(review.user for review in reviews))}
+        products = {product: index for index, product in enumerate(set(review.product for review in reviews))}
+
+        #Creating the matrix
+        num_products = len(products)
+        num_users = len(users)
+        rating_matrix = np.zeros((num_products, num_users))
+
+        for review in reviews:
+            product_index = products[review.product]
+            user_index = users[review.user]
+            rating_matrix[product_index, user_index] = review.rating
+
+        SVD = TruncatedSVD(n_components=2)
+        decomposed_matrix = SVD.fit_transform(rating_matrix)
+        correlation_matrix = np.corrcoef(decomposed_matrix)
+
+        related_products = np.zeros((len(user_products), len(products)))
+        for i, product in enumerate(user_products):
+            product_index = products[product]
+            related_products[i] += correlation_matrix[product_index]
+        
+        correlations = related_products.T
+        correlation_score = np.zeros((len(products)))
+
+        for i, scores in enumerate(correlations):
+            # Take the median
+            s = np.sort(scores)
+            n = len(s)
+            if n % 2 == 0:
+                correlation_score[i] = (s[n // 2] + s[n // 2 + 1]) / 2
+            else:
+                correlation_score[i] = s[n // 2]
+
+        products_list = [prod for prod in Product.objects.all()]
+
+        def comparison_key(p):
+            product_index = products.get(p)
+            if (product_index is not None):
+                return correlation_score[product_index]
+            else:
+                return 0
+
+        products_list.sort(key=comparison_key, reverse=True)
+
+        return Response(ProductsSerializer(products_list, many=True).data, status=status.HTTP_200_OK)
