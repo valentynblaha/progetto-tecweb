@@ -12,6 +12,8 @@ dj-rest-auth = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 djangorestframework-jwt = "*"
+numpy = "*"
+scikit-learn = "*"
 
 [dev-packages]
 

@@ -1,6 +1,7 @@
 import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useCallback, useMemo, useState } from "react";
 import api from "../api/api";
+import useAuth from "../hooks/useAuth";
 
 /**
  * @type {React.Context<{cartCount: number, update: () => Promise}>}
@@ -17,7 +18,7 @@ export function CartProvider({ children }) {
         setCart(response.data)
       }
     } catch (error) {
-      console.log(error)
+      console.info("Could not update cart")
     }
   }
 

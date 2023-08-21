@@ -3,14 +3,14 @@ import React, { createContext, useState } from "react";
 
 /**
  * @type {React.Context<React.Dispatch<React.SetStateAction<
- * {open: boolean, msg: string, severity: "warning" | "info" | "error" | "success"}>>>}
+ * {open: boolean, message: string, severity: "warning" | "info" | "error" | "success"}>>>}
  */
 const SnackbarContext = createContext(null);
 
 export function SnackbarProvider({ children }) {
   const [snackbar, setSnackbar] = useState({
     open: false,
-    msg: "",
+    message: "",
     severity: "info",
   });
 

@@ -11,7 +11,7 @@ export default function ErrorPage() {
     localStorage.removeItem("accesstoken");
   }
 
-  return error.response?.status === 401 ? (
+  return error.response?.status && auth.email === 401 ? (
     <Navigate to="login/" replace />
   ) : (
     <div className="d-flex align-items-center justify-content-center w-100 flex-column" style={{ height: "100vh" }}>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 
 
@@ -35,12 +36,16 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_rating(self):
+        aggregate = Review.objects.filter(product=self).aggregate(avg=Avg("rating"))
+        return round(aggregate["avg"] or 0)
 
 class Review(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
-    name=models.CharField(max_length=200,blank=True)
-    rating=models.IntegerField(null=True,blank=True,default=0, validators=[MaxValueValidator(10), MinValueValidator(0)])
+    name=models.CharField(max_length=200)
+    rating=models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0)])
     comment=models.TextField(blank=True)
     
     def __str__(self):

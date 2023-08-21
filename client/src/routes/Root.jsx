@@ -50,8 +50,8 @@ export default function Root() {
             <Typography
               variant="h4"
               noWrap
-              component="a"
-              href="/"
+              component={LinkBehavior}
+              to="/"
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -87,17 +87,6 @@ export default function Root() {
               >
                 Prodotti
               </Button>
-              <Button
-                component={LinkBehavior}
-                to="/"
-                sx={{
-                  my: 2,
-                  color: "white",
-                  display: "block",
-                }}
-              >
-                Info
-              </Button>
             </Box>
 
             {auth.email && (
@@ -105,8 +94,8 @@ export default function Root() {
                 <Tooltip title="Opzioni utente">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      alt="Profile picture"
-                      src={auth.image[0] === "/" ? "http://localhost:8000" + auth.image : auth.image}
+                      alt={auth.first_name || auth.email}
+                      src={auth.image}
                     />
                   </IconButton>
                 </Tooltip>

@@ -87,6 +87,7 @@ class CourseSerializer(serializers.ModelSerializer):
         return exclusions + ['instructor']
 
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
+    course = CourseSerializer()
     class Meta:
         model = CourseSubscription
         fields = ("id", "course", "created_at")
