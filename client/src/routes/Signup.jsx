@@ -18,9 +18,11 @@ import MuiFileInput from "../utils/MuiFileInput";
 import api from "../api/api";
 
 export default function Signup() {
+  const [error, setError] = useState("");
   const [values, setValues] = useState({
     email: "",
     password: "",
+    passwordRepeat: "",
     first_name: "",
     last_name: "",
     phone: "",
@@ -29,16 +31,26 @@ export default function Signup() {
   });
 
   const [success, setSuccess] = useState(false);
-  const { email, password, first_name, last_name, phone, image } = values;
+  const { email, password, passwordRepeat, first_name, last_name, phone, image } = values;
 
   const paperStyle = { padding: "30px 20px", width: 400, margin: "20px auto" };
   const avatarStyle = { backgroundColor: "blue" };
   const marginTop = { marginTop: 5 };
   const marginbottom = { marginbottom: 5 };
 
-  const postUserData = async ({ values }) => {
-    const response = await api.post("api/user/register_user/",  values );
-    return response;
+  const postUserData = async () => {
+    try {
+      const response = await api.post("api/user/register_user/",  values );
+      if (response.status === 201) {
+        setSuccess(true)
+      }
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data.password) {
+        setError(<ul>{error.response.data.password.map((e, i) => <li key={i}>{e}</li>)}</ul>)
+      } else
+      setError(String(error))
+    }
+    
   };
 
   const handleChange = (name) => (event) => {
@@ -46,8 +58,8 @@ export default function Signup() {
   };
 
   const handleSubmit = (e) => {
-    const response = postUserData({ values });
-    if (response) setSuccess(true);
+    e.preventDefault()
+    postUserData()
   };
 
   return success ? (
@@ -64,10 +76,23 @@ export default function Signup() {
           <Avatar style={avatarStyle}></Avatar>
           <h2 style={marginbottom}>Registrazione User</h2>
         </Grid>
+        {error && (
+          <div
+            style={{
+              background: "rgb(255 0 43 / 21%)",
+              border: "2px solid red",
+              borderRadius: "0.5em",
+              padding: "0.5em",
+              marginBottom: "0.5em",
+            }}
+          >
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} >
           <Grid container rowGap={1}>
-            <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} />
             <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required/>
+            <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} />
             <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required/>
             <FormControl component="fieldset" style={marginTop} required>
               <FormLabel component="legend">Sesso</FormLabel>
@@ -84,6 +109,14 @@ export default function Signup() {
               type="password"
               value={password}
               onChange={handleChange("password")}
+            />
+            <TextField
+              fullWidth
+              required
+              label="Ripeti password"
+              type="password"
+              value={passwordRepeat}
+              onChange={handleChange("passwordRepeat")}
             />
             <MuiFileInput
               accept="image/*"

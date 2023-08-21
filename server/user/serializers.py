@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions
 from .models import BasicUser
 
 class URLToFileField(serializers.FileField):
@@ -33,6 +34,11 @@ class UserSerializer(serializers.ModelSerializer):
             validated_data.pop('is_staff', None)
             validated_data.pop('is_instructor', None)
         instance = self.Meta.model(**validated_data)
+        try:
+            validate_password(password=password)
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({"password": [er.message for er in e.error_list]})
+
 
         if password is not None:
             instance.set_password(password)
