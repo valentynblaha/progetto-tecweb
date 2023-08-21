@@ -220,7 +220,7 @@ class RecommendedView(APIView):
                 s = np.sort(scores)
                 n = len(s)
                 if n % 2 == 0:
-                    correlation_score[i] = (s[n // 2] + s[n // 2 + 1]) / 2
+                    correlation_score[i] = (s[n // 2 - 1] + s[n // 2]) / 2
                 else:
                     correlation_score[i] = s[n // 2]
 
