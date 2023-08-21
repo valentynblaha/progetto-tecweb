@@ -14,5 +14,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
-    path("upload/", views.ImageUploadView.as_view(), name="image_upload")
+    path("upload/", views.ImageUploadView.as_view(), name="image_upload"),
+    path("reset-password/", views.ResetPasswordView.as_view(), name="reset_password")
 ]

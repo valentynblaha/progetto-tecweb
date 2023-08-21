@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from .serializers import ImageUploadSerializer, UserSerializer
 from .models import BasicUser
 from rest_framework.response import Response
+from rest_framework.permissions import (IsAuthenticated)
 from rest_framework import status
 from rest_framework import views
 from django.core.files.storage import FileSystemStorage
@@ -19,6 +20,17 @@ class RegisterUser(viewsets.ModelViewSet):
         else:
             serializer = UserSerializer(request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class ResetPasswordView(views.APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        user = BasicUser.objects.filter(user=request.user.email)
+        new_password = request.data.get('new_password')
+        if user is not None:
+           user.set_password(new_password)
+           user.save()
+           return Response({"detail": "password reset successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": "user not found"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ImageUploadView(views.APIView):
 

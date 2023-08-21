@@ -14,6 +14,7 @@ import ProductDetail, { productLoader } from "./routes/ProductDetail";
 import Products, { productsLoader } from "./routes/Products";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
+import PasswordChange from "./routes/ResetPassword";
 import SignupInstructor, { signupLoader } from "./routes/SignupInstructor";
 import Cart, { cartLoader } from "./routes/Cart";
 import { SnackbarProvider } from "./context/SnackbarContext";
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
   {
     path: "/signup/user",
     element: <Signup />,
+  },
+  {
+    path: "/reset",
+    element: <PasswordChange />,
   },
   {
     path: "/signup/instructor",
