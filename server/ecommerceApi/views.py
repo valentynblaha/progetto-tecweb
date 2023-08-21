@@ -206,30 +206,38 @@ class RecommendedView(APIView):
 
         related_products = np.zeros((len(user_products), len(products)))
         for i, product in enumerate(user_products):
-            product_index = products[product]
-            related_products[i] += correlation_matrix[product_index]
+            product_index = products.get(product)
+            if product_index is not None:
+                correlation_matrix[product_index][product_index] = 0
+                related_products[i] += correlation_matrix[product_index]
         
         correlations = related_products.T
         correlation_score = np.zeros((len(products)))
 
-        for i, scores in enumerate(correlations):
-            # Take the median
-            s = np.sort(scores)
-            n = len(s)
-            if n % 2 == 0:
-                correlation_score[i] = (s[n // 2] + s[n // 2 + 1]) / 2
-            else:
-                correlation_score[i] = s[n // 2]
+        if correlations.size != 0:
+            for i, scores in enumerate(correlations):
+                # Take the median
+                s = np.sort(scores)
+                n = len(s)
+                if n % 2 == 0:
+                    correlation_score[i] = (s[n // 2] + s[n // 2 + 1]) / 2
+                else:
+                    correlation_score[i] = s[n // 2]
 
         products_list = [prod for prod in Product.objects.all()]
 
-        def comparison_key(p):
+        def comparison_key(p: Product):
             product_index = products.get(p)
             if (product_index is not None):
-                return correlation_score[product_index]
+                return (correlation_score[product_index], p.get_rating())
             else:
-                return 0
+                return (0, p.get_rating())
 
         products_list.sort(key=comparison_key, reverse=True)
-
-        return Response(ProductsSerializer(products_list, many=True).data, status=status.HTTP_200_OK)
+        max_products = self.request.query_params.get("max_products", 10)
+        try:
+            mp = int(max_products)
+        except ValueError:
+            mp = 10
+        products_list = products_list[0:mp - 1]
+        return Response(ProductsSerializer(products_list, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
