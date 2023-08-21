@@ -40,7 +40,7 @@ export function dayjsTimeToStr(dayjsVal) {
 export function overlap(a, b) {
   const d = strTimeToDayjs; // only for aestethics
   const overlapSegment = (s1, e1, s2, e2) => d(e1) > d(s2) && d(e2) > d(s1);
-
+  if (!a || !b) return false;
   return a.week_day === b.week_day && Boolean(
     overlapSegment(a.start1, a.end1, b.start1, b.end1) ||
       (b.start2 && b.end2 && overlapSegment(a.start1, a.end1, b.start2, b.end2)) ||

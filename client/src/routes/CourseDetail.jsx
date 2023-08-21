@@ -1,95 +1,154 @@
-import React, { useState  } from 'react'
-import api from '../api/api';
-import { Box, Button, Divider, Grid, Paper, Typography , Snackbar, Alert} from "@mui/material";
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
-import LazyImg from '../utils/LazyImg';
-import useAuth from "../hooks/useAuth"
-import '../api/format';
+import React, { useState } from "react";
+import api from "../api/api";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Paper,
+  Typography,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  ListItem,
+} from "@mui/material";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
+import LazyImg from "../utils/LazyImg";
+import useAuth from "../hooks/useAuth";
+import useSnackbar from "../hooks/useSnackbar";
+import "../api/format";
+import { overlap } from "../api/format";
 
 export const courseLoader = async ({ params }) => {
-  const responseCourse = await api.get("api/course/course/" + params.courseId)
+  const responseCourse = await api.get("api/course/course/" + params.courseId);
   const responseCategories = await api.get("api/course/fitnessCategory");
-  const idInstructor = responseCourse.data.instructor
-  const responseInstructor = await api.get("api/course/register_instructor/" + idInstructor)
-  return { course: responseCourse.data, instructor: responseInstructor.data, categories: responseCategories.data };
+  const idInstructor = responseCourse.data.instructor;
+  const responseInstructor = await api.get("api/course/register_instructor/" + idInstructor);
+  const responseSubs = await api.get("api/course/subscriptions/");
+  return {
+    course: responseCourse.data,
+    instructor: responseInstructor.data,
+    categories: responseCategories.data,
+    subs: responseSubs.data,
+  };
 };
 
-
 export default function CourseDetail() {
-  const {course , instructor} = useLoaderData()
-  const [snackbar, setSnackbar] = useState({
-    message: "",
-    severity: "info",
-    open: false
-  })
-  var conflictingCourse = null  
-  const [auth] = useAuth()
+  const { course, instructor, subs } = useLoaderData();
+  const [dialog, setDialog] = useState({
+    title: "Attenzione",
+    msg: "",
+    open: false,
+    action: () => null,
+  });
+  const setSnackbar = useSnackbar();
   const navigate = useNavigate()
   const postData = async () => {
     try {
-      await api.post("api/course/subscriptions/",  {course: course.id} );
+      const response = await api.post("api/course/subscriptions/", { course: course.id });
+      if (response.status === 201) {
+        setSnackbar({ severity: "success", message: "Iscrizione avvenuta con successo", open: true });
+      }
     } catch (error) {
       if (error.response?.data.detail === "Subscription already exists") {
-        setSnackbar({...snackbar, message: "sei gia iscritto al corso", open: true})
-      }else if(error.response?.data.detail === "Authentication credentials were not provided.") {
-              navigate('/login')
+        setSnackbar({ severity: "error", message: "Sei gia iscritto al corso", open: true });
       }
     }
   };
-  
-  const getSubscriptions = async () =>{
-    const id1 = auth.id
-    const response = await Promise.all([
-     await api.get("api/course/subscriptions/", {id:id1}),
-     await api.get("api/course/course/"),
-     await api.get("api/course/course/" ,course.courseid),
-    ]);
-    console.log(response[0].data)
-    console.log(response[1].data)
-    console.log(response[2].data)
 
-    return { subscriptions: response[0].data, schedule: response[1].data.schedule, newSchedule: response[2].data.schedule };
-  }
-  
-  const handleSubscription = () =>{
-    const {subscriptions , schedule , newSchedule} = getSubscriptions()
-    /**
-     * Checks if 2 Schedule days overlap
-     * @param {ScheduleDay} a
-     * @param {ScheduleDay} b
-     * 
-     */
-
-  }
-
-  const handleSubmit = (e) => {
-   // handleSubscription();
-    if (conflictingCourse != null){
-       console.log("gia fatto")
-    }
-    postData()
-   
+  const getSubscriptions = async () => {
+    const response = await api.get("api/course/subscriptions/");
+    return response.data;
   };
-  
-  return (
 
+  const handleSubscription = async () => {
+    let msg = {};
+    let overlaps = false;
+    for (const sub of subs) {
+      const schedule = sub.course.schedule;
+      for (const day of course.schedule) {
+        if (
+          overlap(
+            day,
+            schedule.find((d) => d.week_day === day.week_day)
+          )
+        ) {
+          overlaps = true;
+          const name = sub.course.name;
+          if (!msg[name]) msg[name] = [];
+          msg[name].push(day.week_day);
+        }
+      }
+    }
+    if (overlaps) {
+      const message = (
+        <>
+          <Typography>Ci sono sovvrapposizioni con i seguenti corsi:</Typography>
+          <ul>
+            {Object.keys(msg).map((key) => (
+              <li style={{ paddingTop: 0, paddingBottom: 0 }} key={key}>{`${key}: ${msg[key].join(" ,")}`}</li>
+            ))}
+          </ul>
+          <Typography>Sei sicuro di voler continuare?</Typography>
+        </>
+      );
+      setDialog({ msg: message, title: "Vuoi continuare?", open: true, action: () => postData() });
+    }
+  };
+
+  const handleUnsubscribe = async (e) => {
+    const sub = subs.find((s) => s.course.id === course.id);
+    if (!sub) return;
+    setDialog({
+      title: "Sei sicuro?",
+      msg: "Sei sicuro di voler cancellare l'scrizione?",
+      open: true,
+      action: async () => {
+        try {
+          const response = await api.delete("api/course/subscriptions/" + sub.id + "/");
+          if (response.status === 200) {
+            setSnackbar({ severity: "success", message: "Iscrizione cancellata", open: true });
+            navigate(0)
+          }
+        } catch (error) {
+          setSnackbar({ severity: "error", message: String(error), open: true });
+        }
+      },
+    });
+  };
+
+  return (
     <Box>
-       <Snackbar open={snackbar.open}  autoHideDuration={6000} onClose={() => setSnackbar({...snackbar, open: false})}
-        anchorOrigin={{vertical: "top", horizontal: "center"}}>
-        <Alert onClose={() => setSnackbar({...snackbar, open: false})} severity="error" sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <Dialog sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 435 } }} maxWidth="xs" open={dialog.open}>
+        <DialogTitle>{dialog.title}</DialogTitle>
+        <DialogContent dividers>{dialog.msg}</DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={() => setDialog({ ...dialog, open: false })}>
+            Annulla
+          </Button>
+          <Button
+            onClick={(e) => {
+              setDialog({ ...dialog, open: false });
+              dialog.action(e);
+            }}
+          >
+            Sì
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Grid container spacing={2} padding={2}>
         <Grid item xs={4}>
-          <LazyImg src={course.image} alt="Course image" width="100%"/>
+          <LazyImg src={course.image} alt="Course image" width="100%" />
         </Grid>
         <Grid item xs={8} flexDirection="column">
           <div>
             <h1>{course.name}</h1>
           </div>
-          <Typography>Da: {instructor.first_name + ' ' + instructor.last_name}</Typography>
+          <Typography>Da: {instructor.first_name + " " + instructor.last_name}</Typography>
           <Typography>Email: {instructor.email}</Typography>
 
           <Paper sx={{ p: 1, my: 1 }}>
@@ -115,38 +174,46 @@ export default function CourseDetail() {
                   <td>Giorni:</td>
                 </tr>
                 <div className="schedule">
-                    {course.schedule.map((schedule) => (
-                       <div key={schedule.week_day} className="schedule: ">
-                         <Typography color="#808080" fontSize="0.8rem">
-                         {schedule.week_day + ' : '}  
-                         </Typography>
-                         {schedule.start1 != null && schedule.end1 != null &&
-                         <Typography color="#808080" fontSize="0.8rem">
-                            {'dalle ' + schedule.start1 + ' alle ' + schedule.end1}  
-                         </Typography>
-                         }
-                         {schedule.start2 != null && schedule.end2 != null &&
-                         <Typography color="#808080" fontSize="0.8rem">
-                           {'dalle ' + schedule.start2 + ' alle ' + schedule.end2}  
-                         </Typography> 
-                         }
-                       </div>
+                  {course.schedule.map((schedule) => (
+                    <div key={schedule.week_day} className="schedule: ">
+                      <Typography color="#808080" fontSize="0.8rem">
+                        {schedule.week_day + " : "}
+                      </Typography>
+                      {schedule.start1 != null && schedule.end1 != null && (
+                        <Typography color="#808080" fontSize="0.8rem">
+                          {"dalle " + schedule.start1 + " alle " + schedule.end1}
+                        </Typography>
+                      )}
+                      {schedule.start2 != null && schedule.end2 != null && (
+                        <Typography color="#808080" fontSize="0.8rem">
+                          {"dalle " + schedule.start2 + " alle " + schedule.end2}
+                        </Typography>
+                      )}
+                    </div>
                   ))}
                 </div>
                 <tr>
                   <td>Indirizzo palestra : </td>
                 </tr>
-                <Typography color="#808080" fontSize="1rem" >
-                      {instructor.gym_address}
+                <Typography color="#808080" fontSize="1rem">
+                  {instructor.gym_address}
                 </Typography>
               </tbody>
-              
             </table>
           </Paper>
-          <Button variant="contained" onClick={handleSubmit} startIcon={<PlaylistAddCheckCircleIcon />}> iscrivimi</Button>
+          {subs.find((s) => s.course.id === course.id) ? (
+            <Button variant="contained" color="error" onClick={() => handleUnsubscribe()}>
+              Disiscrivimi
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={() => handleSubscription()} startIcon={<PlaylistAddCheckCircleIcon />}>
+              {" "}
+              iscrivimi
+            </Button>
+          )}
         </Grid>
       </Grid>
       <Divider />
     </Box>
-  )
+  );
 }
