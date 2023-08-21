@@ -95,7 +95,7 @@ export default function Root() {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt={auth.first_name || auth.email}
-                      src={auth.image[0] === "/" ? "http://localhost:8000" + auth.image : auth.image}
+                      src={auth.image}
                     />
                   </IconButton>
                 </Tooltip>

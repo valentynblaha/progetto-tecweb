@@ -17,7 +17,7 @@ class RegisterUser(viewsets.ModelViewSet):
         if request.user.is_anonymous:
             return Response({"detail": "Non autorizzato"}, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            serializer = UserSerializer(request.user)
+            serializer = self.serializer_class(request.user, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ImageUploadView(views.APIView):
