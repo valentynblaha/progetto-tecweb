@@ -8,16 +8,17 @@ function PasswordChange() {
   const [auth] = useAuth();
 
   const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
   const [error, setError] = useState("");
-  const {newPassword,confirmNewPassword} = passwordData;
+  const {newPassword,confirmNewPassword, oldPassword} = passwordData;
   const handleChange = (name) => (event) =>{
     setPasswordData({ ...passwordData, [name]: event.target.value});
   };
 
-  const postUserData = async ({ values }) => {
+  const postUserData = async ( values ) => {
     if(auth.email){
     const response = await api.post("api/user/reset-password/",  values );
     }
@@ -28,7 +29,7 @@ function PasswordChange() {
     if(passwordData.newPassword != passwordData.confirmNewPassword){
         setError(String("la nuova password e conferma password non corrispondono"));
     }else{
-         postUserData({ passwordData })
+         postUserData( passwordData )
         
     }
   };
@@ -58,12 +59,22 @@ function PasswordChange() {
         </div>
       )}
       <Grid container rowGap={1}>
+      <TextField
+          label="Vecchia Password"
+          placeholder="inserisci nuova password"
+          value={oldPassword}
+          onChange={handleChange("oldPassword")}
+          fullWidth
+          type='password'
+          required
+        />
         <TextField
           label="Nuova Password"
           placeholder="inserisci nuova password"
           value={newPassword}
           onChange={handleChange("newPassword")}
           fullWidth
+          type='password'
           required
         />
         <TextField
@@ -71,7 +82,8 @@ function PasswordChange() {
           placeholder="inserisci di nuovo il password"
           value={confirmNewPassword}
           onChange={handleChange("confirmNewPassword")}
-          fullWidth
+          fullWidth          
+          type='password'
           required
         />
       </Grid>

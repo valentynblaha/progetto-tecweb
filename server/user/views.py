@@ -7,6 +7,8 @@ from rest_framework.permissions import (IsAuthenticated)
 from rest_framework import status
 from rest_framework import views
 from django.core.files.storage import FileSystemStorage
+from django.core import exceptions
+from django.contrib.auth.password_validation import validate_password
 import os
 # Create your views here.
 
@@ -24,13 +26,19 @@ class RegisterUser(viewsets.ModelViewSet):
 class ResetPasswordView(views.APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
-        user = BasicUser.objects.filter(user=request.user.email)
-        new_password = request.data.get('new_password')
-        if user is not None:
-           user.set_password(new_password)
-           user.save()
-           return Response({"detail": "password reset successfully"}, status=status.HTTP_201_CREATED)
-        return Response({"detail": "user not found"}, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        new_password = request.data.get('newPassword')
+        old_password = request.data.get('oldPassword')
+        if not user.check_password(old_password):
+            return Response({"detail": "password not valid"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            validate_password(new_password)
+        except exceptions.ValidationError as e:
+            return Response({"password": [er.message for er in e.error_list]}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"detail": "password reset successfully"}, status=status.HTTP_201_CREATED)
 
 class ImageUploadView(views.APIView):
 
