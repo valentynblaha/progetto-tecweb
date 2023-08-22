@@ -78,8 +78,8 @@ function PasswordChange() {
           required
         />
         <TextField
-          label="conferma password"
-          placeholder="inserisci di nuovo il password"
+          label="Conferma password"
+          placeholder="inserisci di nuovo la password"
           value={confirmNewPassword}
           onChange={handleChange("confirmNewPassword")}
           fullWidth          
