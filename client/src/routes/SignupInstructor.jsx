@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Grid,
   Paper,
@@ -16,6 +16,7 @@ import {
   Select,
   OutlinedInput,
   MenuItem,
+  Alert,
 } from "@mui/material";
 import api from "../api/api";
 import MuiFileInput from "../utils/MuiFileInput";
@@ -27,6 +28,8 @@ export const signupLoader = async () => {
 };
 
 export default function Signup() {
+  const [error, setError] = useState("");
+  const errorRef = useRef(null)
   const { categories: loadedCategories } = useLoaderData();
   const [values, setValues] = useState({
     email: "",
@@ -46,6 +49,7 @@ export default function Signup() {
   const avatarStyle = { backgroundColor: "blue" };
   const marginTop = { marginTop: 5 };
   const marginbottom = { marginbottom: 5 };
+
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
@@ -74,6 +78,11 @@ export default function Signup() {
           <Avatar style={avatarStyle}></Avatar>
           <h2 style={marginbottom}>Registrazione Istruttore</h2>
         </Grid>
+        {error && (
+          <Alert severity="error" sx={{my: 1}} ref={errorRef}>
+            {error}
+          </Alert>
+        )}
         <form>
           <Grid container rowGap={1}>
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} required />
@@ -87,7 +96,7 @@ export default function Signup() {
               onChange={handleChange("gym_address")}
               required
             />
-            <FormControl sx={{width: "100%" }}>
+            <FormControl sx={{ width: "100%" }}>
               <InputLabel id="demo-multiple-name-label">Categorie</InputLabel>
               <Select
                 labelId="demo-multiple-name-label"
@@ -101,7 +110,7 @@ export default function Signup() {
                 // MenuProps={MenuProps}
               >
                 {loadedCategories.map((category) => (
-                  <MenuItem key={category.id} value={category.id} >
+                  <MenuItem key={category.id} value={category.id}>
                     {category.name}
                   </MenuItem>
                 ))}
@@ -129,6 +138,8 @@ export default function Signup() {
               url="api/course/upload_instructor/"
               style={{ width: "50px", height: "50px" }}
               onChange={(val) => setValues({ ...values, image: val })}
+              onError={(e) => {
+                setError(e.response?.data.image?.map((e, i) => <p key={i}>{e}</p>) || String(e))}}
               required
             >
               Carica immagine

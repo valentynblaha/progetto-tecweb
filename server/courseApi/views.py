@@ -45,7 +45,7 @@ class InstructorViewSet(viewsets.ModelViewSet):
 
 class CourseSubscriptionViewSet(mixins.DestroyModelMixin, viewsets.ViewSet):
 
-    
+    permission_classes = (permissions.IsAuthenticated,)
 
     def list(self, request):
         queryset = CourseSubscription.objects.filter(user=request.user)

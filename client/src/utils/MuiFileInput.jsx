@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import api from "../api/api";
 import "./MuiFileInput.css";
 
-export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required = false }) {
+export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required = false, onError }) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [imgPath, setImgPath] = useState("");
@@ -38,7 +38,7 @@ export default function MuiFileInput({ children, accept, id, url, style, name, o
             .catch((error) => {
               setLoading(false);
               setProgress(0)
-              console.log("An error has occured: " + error);
+              if (onError) onError(error)
             });
         }}
       />

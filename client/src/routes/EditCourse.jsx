@@ -3,6 +3,7 @@ import api from "../api/api";
 import { Form, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import {
+  Alert,
   Button,
   Checkbox,
   Dialog,
@@ -107,26 +108,27 @@ export default function EditCourse() {
     console.log("Validate");
     const { start1, end1, start2, end2 } = dialogValues;
     const errors = { ...dialogErrors };
+    let valid = true;
     if (strTimeToDayjs(end1).diff(strTimeToDayjs(start1)) <= 0) {
       errors.end1 = "L'orario di fine non può essere prima dell'inizio";
-      return false;
+      valid = false;
     } else {
       errors.end1 = "";
     }
     if (strTimeToDayjs(start2).diff(strTimeToDayjs(end1)) <= 0 && part2) {
       errors.start2 = "Il secondo turno non può iniziare prima che finisca il primo";
-      return false;
+      valid = false;
     } else {
       errors.start2 = "";
     }
     if (strTimeToDayjs(end2).diff(strTimeToDayjs(start2)) <= 0 && part2) {
       errors.end2 = "L'orario di fine non può essere prima dell'inizio";
-      return false;
+      valid = false;
     } else {
       errors.end2 = "";
     }
     setDialogErrors(errors);
-    return true;
+    return valid;
   };
 
   const handleClose = () => {

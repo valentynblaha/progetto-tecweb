@@ -32,15 +32,16 @@ export const productLoader = async ({ params }) => {
 
 export default function ProductDetail() {
   const [auth] = useAuth();
-  const {update} = useCart()
+  const { update } = useCart();
   const { product, reviews } = useLoaderData();
+  const navigate = useNavigate();
   const [review, setReview] = useState({
     name: "",
     rating: 0,
     comment: "",
   });
 
-  const setSnackbar = useSnackbar()
+  const setSnackbar = useSnackbar();
 
   const [qty, setQty] = useState(1);
   const { name, rating, comment } = review;
@@ -68,17 +69,21 @@ export default function ProductDetail() {
 
   const addToCart = async () => {
     try {
-      const response = await api.post("api/ecommerce/orders/", { product: product.id, quantity: qty})
+      const response = await api.post("api/ecommerce/orders/", { product: product.id, quantity: qty });
       if (response.status === 201) {
-        update()
+        update();
         setSnackbar({ severity: "success", message: "Prodotto aggiunto al carrello", open: true });
       }
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data.code === 1) {
         setSnackbar({ severity: "error", message: "La quantità richiesta non è disponibile", open: true });
+      } else if (error.response?.status === 401) {
+        navigate("/login");
+      } else {
+        setSnackbar({ severity: "error", message: String(error), open: true });
       }
     }
-  }
+  };
 
   return (
     <Box>
@@ -120,14 +125,19 @@ export default function ProductDetail() {
               onChange={(e) => {
                 let val = Number.parseInt(e.target.value);
                 if (Number.isNaN(val)) val = 1;
-                if (val > product.countInStock || val < 1 ) return;
+                if (val > product.countInStock || val < 1) return;
                 setQty(val);
               }}
               sx={{ width: "6em" }}
             />
-            <Button size="large" startIcon={<AddShoppingCart />} variant="contained" onClick={() => {
-              addToCart()
-            }}>
+            <Button
+              size="large"
+              startIcon={<AddShoppingCart />}
+              variant="contained"
+              onClick={() => {
+                addToCart();
+              }}
+            >
               Aggiungi al carrello
             </Button>
           </Stack>

@@ -14,6 +14,9 @@ import {
   DialogContent,
   DialogActions,
   ListItem,
+  Stack,
+  Chip,
+  colors,
 } from "@mui/material";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
@@ -22,13 +25,24 @@ import useAuth from "../hooks/useAuth";
 import useSnackbar from "../hooks/useSnackbar";
 import "../api/format";
 import { overlap } from "../api/format";
+import { AccessTime, Delete, Done, Edit } from "@mui/icons-material";
+import LinkBehavior from "../utils/LinkBehaviour";
 
 export const courseLoader = async ({ params }) => {
   const responseCourse = await api.get("api/course/course/" + params.courseId);
   const responseCategories = await api.get("api/course/fitnessCategory");
   const idInstructor = responseCourse.data.instructor;
   const responseInstructor = await api.get("api/course/register_instructor/" + idInstructor);
-  const responseSubs = await api.get("api/course/subscriptions/");
+  let responseSubs;
+  try {
+    responseSubs = await api.get("api/course/subscriptions/");
+  } catch (error) {
+    if (error.response?.status === 401) {
+      responseSubs = { data: [] };
+    } else {
+      throw error;
+    }
+  }
   return {
     course: responseCourse.data,
     instructor: responseInstructor.data,
@@ -39,6 +53,7 @@ export const courseLoader = async ({ params }) => {
 
 export default function CourseDetail() {
   const { course, instructor, subs } = useLoaderData();
+  const [auth] = useAuth();
   const [dialog, setDialog] = useState({
     title: "Attenzione",
     msg: "",
@@ -46,7 +61,7 @@ export default function CourseDetail() {
     action: () => null,
   });
   const setSnackbar = useSnackbar();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const postData = async () => {
     try {
       const response = await api.post("api/course/subscriptions/", { course: course.id });
@@ -56,6 +71,10 @@ export default function CourseDetail() {
     } catch (error) {
       if (error.response?.data.detail === "Subscription already exists") {
         setSnackbar({ severity: "error", message: "Sei gia iscritto al corso", open: true });
+      } else if (error.response?.status === 401) {
+        navigate("/login");
+      } else {
+        setSnackbar({ severity: "error", message: String(error), open: true });
       }
     }
   };
@@ -93,7 +112,7 @@ export default function CourseDetail() {
       );
       setDialog({ msg: message, title: "Vuoi continuare?", open: true, action: () => postData() });
     } else {
-      postData()
+      postData();
     }
   };
 
@@ -109,13 +128,62 @@ export default function CourseDetail() {
           const response = await api.delete("api/course/subscriptions/" + sub.id + "/");
           if (response.status === 200) {
             setSnackbar({ severity: "success", message: "Iscrizione cancellata", open: true });
-            navigate(0)
+            navigate(0);
           }
         } catch (error) {
           setSnackbar({ severity: "error", message: String(error), open: true });
         }
       },
     });
+  };
+
+  const handleDelete = () => {
+    setDialog({
+      title: "Sei sicuro?",
+      msg: "Sei sicuro di voler cancellare il corso?",
+      open: true,
+      action: async () => {
+        try {
+          const response = await api.delete("api/course/course/" + course.id + "/");
+          if (response.status === 204) {
+            setSnackbar({ severity: "success", message: "Corso eliminato con successo", open: true });
+            navigate("/courses");
+          }
+        } catch (error) {
+          setSnackbar({ severity: "error", message: String(error), open: true });
+        }
+      },
+    });
+  };
+
+  const renderButtons = () => {
+    if (auth.is_instructor && course.instructor === auth.id) {
+      return (
+        <>
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" startIcon={<Edit />} component={LinkBehavior} to={`edit`}>
+              Modifica
+            </Button>
+            <Button variant="contained" startIcon={<Delete />} color="error" onClick={() => handleDelete()}>
+              Elimina
+            </Button>
+          </Stack>
+        </>
+      );
+    }
+
+    if (subs.find((s) => s.course.id === course.id)) {
+      return (
+        <Button variant="contained" color="error" onClick={() => handleUnsubscribe()}>
+          Disiscrivimi
+        </Button>
+      );
+    }
+    return (
+      <Button variant="contained" onClick={() => handleSubscription()} startIcon={<PlaylistAddCheckCircleIcon />}>
+        Iscrivimi
+      </Button>
+    );
   };
 
   return (
@@ -157,6 +225,16 @@ export default function CourseDetail() {
               </Typography>
             )}
           </Paper>
+          {auth.is_instructor && course.instructor === auth.id && (
+            <Stack direction="row" spacing={1} my={2} alignItems="center">
+              <Typography>Stato: </Typography>
+              {course.approved ? (
+                <Chip label="Approvato" icon={<Done />} color="success" />
+              ) : (
+                <Chip label="In attesa di approvazione" icon={<AccessTime />} color="warning" />
+              )}
+            </Stack>
+          )}
           <Typography color="#808080" fontSize="0.8rem">
             Prezzo:
           </Typography>
@@ -165,49 +243,34 @@ export default function CourseDetail() {
           </Typography>
           <Paper sx={{ p: 1, my: 1 }}>
             <Typography color="#808080">Dettagli:</Typography>
-            <table className="product-details-table">
-              <tbody>
-                <tr>
-                  <td>Giorni:</td>
-                </tr>
-                <div className="schedule">
-                  {course.schedule.map((schedule) => (
-                    <div key={schedule.week_day} className="schedule: ">
+            <div className="product-details-table">
+              <Typography>Orari:</Typography>
+              <div className="schedule">
+                {course.schedule.map((schedule) => (
+                  <div key={schedule.week_day} className="schedule: ">
+                    <Typography fontSize="0.8rem">{schedule.week_day + " : "}</Typography>
+                    {schedule.start1 != null && schedule.end1 != null && (
                       <Typography color="#808080" fontSize="0.8rem">
-                        {schedule.week_day + " : "}
+                        {"dalle " + schedule.start1 + " alle " + schedule.end1}
                       </Typography>
-                      {schedule.start1 != null && schedule.end1 != null && (
-                        <Typography color="#808080" fontSize="0.8rem">
-                          {"dalle " + schedule.start1 + " alle " + schedule.end1}
-                        </Typography>
-                      )}
-                      {schedule.start2 != null && schedule.end2 != null && (
-                        <Typography color="#808080" fontSize="0.8rem">
-                          {"dalle " + schedule.start2 + " alle " + schedule.end2}
-                        </Typography>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <tr>
-                  <td>Indirizzo palestra : </td>
-                </tr>
-                <Typography color="#808080" fontSize="1rem">
-                  {instructor.gym_address}
-                </Typography>
-              </tbody>
-            </table>
+                    )}
+                    {schedule.start2 != null && schedule.end2 != null && (
+                      <Typography color="#808080" fontSize="0.8rem">
+                        {"dalle " + schedule.start2 + " alle " + schedule.end2}
+                      </Typography>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <tr>
+                <td>Indirizzo palestra : </td>
+              </tr>
+              <Typography color="#808080" fontSize="1rem">
+                {instructor.gym_address}
+              </Typography>
+            </div>
           </Paper>
-          {subs.find((s) => s.course.id === course.id) ? (
-            <Button variant="contained" color="error" onClick={() => handleUnsubscribe()}>
-              Disiscrivimi
-            </Button>
-          ) : (
-            <Button variant="contained" onClick={() => handleSubscription()} startIcon={<PlaylistAddCheckCircleIcon />}>
-              {" "}
-              Iscrivimi
-            </Button>
-          )}
+          {renderButtons()}
         </Grid>
       </Grid>
       <Divider />
