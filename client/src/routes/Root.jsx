@@ -17,7 +17,7 @@ import {
   LinearProgress,
   Badge,
 } from "@mui/material";
-
+import KeyIcon from '@mui/icons-material/Key';
 import { Menu as MenuIcon, Logout, ShoppingCart } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
 import useAuth from "../hooks/useAuth";
@@ -128,6 +128,15 @@ export default function Root() {
                     </ListItemIcon>
                     Logout
                   </MenuItem>
+                 <MenuItem
+                   onClick={() => {
+                      window.location.href = "/reset";
+                    }}>
+                    <ListItemIcon>
+                      <KeyIcon fontSize="small" />
+                    </ListItemIcon>
+                   Cambia password
+                 </MenuItem>
                 </Menu>
               </Box>
             )}

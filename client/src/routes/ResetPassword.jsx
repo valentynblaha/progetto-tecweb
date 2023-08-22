@@ -13,7 +13,7 @@ function PasswordChange() {
     confirmNewPassword: '',
   });
   const [error, setError] = useState("");
-  const {newPassword,confirmNewPassword, oldPassword} = passwordData;
+  const {oldPassword,newPassword,confirmNewPassword} = passwordData;
   const handleChange = (name) => (event) =>{
     setPasswordData({ ...passwordData, [name]: event.target.value});
   };
