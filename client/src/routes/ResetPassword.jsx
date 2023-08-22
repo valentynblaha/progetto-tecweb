@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button, TextField,  Avatar, Paper,Grid } from "@mui/material";
 import api from "../api/api";
 import useAuth from "../hooks/useAuth";
+import { useNavigate } from 'react-router-dom';
 
 
 function PasswordChange() {
   const [auth] = useAuth();
+  const navigate = useNavigate()
 
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
@@ -19,11 +21,20 @@ function PasswordChange() {
   };
 
   const postUserData = async ( values ) => {
-    if(auth.email){
-    const response = await api.post("api/user/reset-password/",  values );
-    }
+    try {
+        const response = await api.post( "api/user/reset-password/",  values );
+        if (response.status === 201) {
+           navigate('/')
+        }
+      } catch (error) {
+        if (error.response?.data.password.indexOf("This password is too short. It must contain at least %(min_length)d characters.") === 0) {
+           setError(String("la nuova password è troppo corta"))
+        }else if (error.response?.data.detail === "password not valid") {
+            setError(String("la vecchia password non è valida"))
+         }
+      }
   };
-
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     if(passwordData.newPassword != passwordData.confirmNewPassword){

@@ -30,13 +30,9 @@ export default function CourseCard({ course, width, instructor_view = false }) {
           </Typography>
         </div>
         <div>
-          {instructor_view ? (
+          {instructor_view && (
             <Button startIcon={<Edit />} variant="outlined" component={LinkBehavior} to={`${course.id}/edit`}>
               Modifica
-            </Button>
-          ) : (
-            <Button variant="outlined" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
-              Iscriviti
             </Button>
           )}
         </div>
