@@ -128,12 +128,12 @@ export default function Signup() {
             >
               Carica immagine
             </MuiFileInput>
-            <FormControlLabel control={<Checkbox name="checkedA" />} label="I accept the terms and conditions." />
-            <Button type="submit" variant="contained" color="primary">
-              Sign up
-            </Button>
           </Grid>
+          <Button style={marginTop} type="submit" variant="contained" color="primary">
+              Sign up
+        </Button>
         </form>
+       
       </Paper>
     </Grid>
   );

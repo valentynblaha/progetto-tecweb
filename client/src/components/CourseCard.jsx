@@ -30,7 +30,7 @@ export default function CourseCard({ course, width, instructor_view = false }) {
           </Typography>
         </div>
         <div>
-          {instructor_view ? (
+          {instructor_view && (
             <>
               {course.approved ? (
                 <Chip label="Approvato" icon={<Done />} color="success" />
@@ -43,10 +43,6 @@ export default function CourseCard({ course, width, instructor_view = false }) {
                 </Button>
               </Box>
             </>
-          ) : (
-            <Button variant="outlined" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
-              Iscriviti
-            </Button>
           )}
         </div>
       </CardContent>
