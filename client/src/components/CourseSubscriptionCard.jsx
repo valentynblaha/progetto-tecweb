@@ -10,7 +10,7 @@ export default function CourseSubscriptionCard({subscription}) {
   return (
     <Grid item xs={3}>
       <Card sx={{ cursor: "pointer" }}>
-        <CardActionArea onClick={() => navigate(String(course.id))} component="div">
+        <CardActionArea onClick={() => navigate("/courses/" + String(course.id))} component="div">
           <CardContent>
             <div>
               <Typography fontWeight="bold">{course.name}</Typography>

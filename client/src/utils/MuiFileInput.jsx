@@ -1,15 +1,16 @@
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import React, { useState } from "react";
 import api from "../api/api";
 import "./MuiFileInput.css";
 
-export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required=false }) {
+export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required = false }) {
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [imgPath, setImgPath] = useState("");
 
   const config = {
     onUploadProgress: (e) => {
-      console.log(e.loaded);
+      setProgress(e.progress * 100);
     },
   };
 
@@ -31,18 +32,17 @@ export default function MuiFileInput({ children, accept, id, url, style, name, o
             .then((response) => {
               if (response.status === 200) {
                 setImgPath(response.data.file);
-                onChange(response.data.file)
-                console.log("File uploaded", response.data.file);
+                if (onChange) onChange(response.data.file);
               }
-              setLoading(false);
             })
             .catch((error) => {
               setLoading(false);
+              setProgress(0)
               console.log("An error has occured: " + error);
             });
         }}
       />
-      <input readOnly value={imgPath} name={name} style={{display: "none"}}/>
+      <input readOnly value={imgPath} name={name} type="hidden" />
       <label htmlFor={id}>
         {/* <Button variant="outlined" component="span" disabled={loading}>
           {children}
@@ -52,7 +52,16 @@ export default function MuiFileInput({ children, accept, id, url, style, name, o
             <img
               src={"http://127.0.0.1:8000/media/" + imgPath}
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            ></img>
+              onLoad={() => {
+                setLoading(false);
+                setProgress(0)
+              }}
+            />
+          )}
+          {loading && (
+            <div className="upload-loading-container">
+              <CircularProgress variant="determinate" value={progress} sx={{}} />
+            </div>
           )}
         </div>
       </label>

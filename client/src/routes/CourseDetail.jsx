@@ -60,11 +60,6 @@ export default function CourseDetail() {
     }
   };
 
-  const getSubscriptions = async () => {
-    const response = await api.get("api/course/subscriptions/");
-    return response.data;
-  };
-
   const handleSubscription = async () => {
     let msg = {};
     let overlaps = false;
@@ -97,6 +92,8 @@ export default function CourseDetail() {
         </>
       );
       setDialog({ msg: message, title: "Vuoi continuare?", open: true, action: () => postData() });
+    } else {
+      postData()
     }
   };
 
@@ -208,7 +205,7 @@ export default function CourseDetail() {
           ) : (
             <Button variant="contained" onClick={() => handleSubscription()} startIcon={<PlaylistAddCheckCircleIcon />}>
               {" "}
-              iscrivimi
+              Iscrivimi
             </Button>
           )}
         </Grid>

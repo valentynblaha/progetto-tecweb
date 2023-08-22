@@ -18,7 +18,7 @@ export default function LazyImg({
           setLoaded(true);
           onLoad(e);
         }}
-        src={src || "/public/placeholder.svg"}
+        src={src || "/placeholder.svg"}
         width={100}
         height={200}
         style={{ objectFit, width, height }}
@@ -27,7 +27,7 @@ export default function LazyImg({
           this.src = "/public/placeholder.svg";
         }}
       />
-      {!loaded && (
+      {!loaded && Boolean(src) && (
         <Skeleton
           variant="rectangular"
           animation="wave"
