@@ -1,31 +1,26 @@
-import React, { useState } from "react";
-import api from "../api/api";
+import { AccessTime, Delete, Done, Edit } from "@mui/icons-material";
+import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
 import {
   Box,
   Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   Paper,
-  Typography,
-  Snackbar,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  ListItem,
   Stack,
-  Chip,
-  colors,
+  Typography,
 } from "@mui/material";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
-import LazyImg from "../utils/LazyImg";
+import api from "../api/api";
+import { DAY_OPTIONS, overlap } from "../api/format";
 import useAuth from "../hooks/useAuth";
 import useSnackbar from "../hooks/useSnackbar";
-import "../api/format";
-import { overlap } from "../api/format";
-import { AccessTime, Delete, Done, Edit } from "@mui/icons-material";
+import LazyImg from "../utils/LazyImg";
 import LinkBehavior from "../utils/LinkBehaviour";
 
 export const courseLoader = async ({ params }) => {
@@ -104,7 +99,9 @@ export default function CourseDetail() {
           <Typography>Ci sono sovvrapposizioni con i seguenti corsi:</Typography>
           <ul>
             {Object.keys(msg).map((key) => (
-              <li style={{ paddingTop: 0, paddingBottom: 0 }} key={key}>{`${key}: ${msg[key].join(" ,")}`}</li>
+              <li style={{ paddingTop: 0, paddingBottom: 0 }} key={key}>{`${
+                DAY_OPTIONS.find((opt) => opt[0] === key)[1]
+              }: ${msg[key].join(" ,")}`}</li>
             ))}
           </ul>
           <Typography>Sei sicuro di voler continuare?</Typography>
@@ -238,33 +235,40 @@ export default function CourseDetail() {
           <Typography color="#808080" fontSize="0.8rem">
             Prezzo:
           </Typography>
-          <Typography fontSize="2rem" fontWeight="bold" sx={{ my: 2 }}>
-            € {course.price}
-          </Typography>
+          <Box sx={{ my: 2 }}>
+            <Typography fontSize="2rem" fontWeight="bold" component="span">
+              € {course.price}
+            </Typography>
+            <Typography component="span" color="#808080">
+              /mese
+            </Typography>
+          </Box>
+
           <Paper sx={{ p: 1, my: 1 }}>
             <Typography color="#808080">Dettagli:</Typography>
             <div className="product-details-table">
               <Typography>Orari:</Typography>
               <div className="schedule">
-                {course.schedule.map((schedule) => (
-                  <div key={schedule.week_day} className="schedule: ">
-                    <Typography fontSize="0.8rem">{schedule.week_day + " : "}</Typography>
-                    {schedule.start1 != null && schedule.end1 != null && (
-                      <Typography color="#808080" fontSize="0.8rem">
-                        {"dalle " + schedule.start1 + " alle " + schedule.end1}
-                      </Typography>
-                    )}
-                    {schedule.start2 != null && schedule.end2 != null && (
-                      <Typography color="#808080" fontSize="0.8rem">
-                        {"dalle " + schedule.start2 + " alle " + schedule.end2}
-                      </Typography>
-                    )}
-                  </div>
-                ))}
+                {course.schedule.map((schedule) => {
+                  const weekDay = DAY_OPTIONS.find((opt) => opt[0] === schedule.week_day)[1];
+                  return (
+                    <div key={schedule.week_day} className="schedule: ">
+                      <Typography fontSize="0.8rem">{weekDay + ":"}</Typography>
+                      {schedule.start1 != null && schedule.end1 != null && (
+                        <Typography color="#808080" fontSize="0.8rem">
+                          {"dalle " + schedule.start1 + " alle " + schedule.end1}
+                        </Typography>
+                      )}
+                      {schedule.start2 != null && schedule.end2 != null && (
+                        <Typography color="#808080" fontSize="0.8rem">
+                          {"dalle " + schedule.start2 + " alle " + schedule.end2}
+                        </Typography>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-              <tr>
-                <td>Indirizzo palestra : </td>
-              </tr>
+              <Typography>Indirizzo palestra:</Typography>
               <Typography color="#808080" fontSize="1rem">
                 {instructor.gym_address}
               </Typography>

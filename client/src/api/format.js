@@ -48,4 +48,15 @@ export function overlap(a, b) {
       (a.start2 && a.end2 && b.start2 && b.end2 && overlapSegment(a.start2, a.end2, b.start2, b.end2))
   );
 }
+
+export const DAY_OPTIONS = [
+  ["Mon", "Lunedì"],
+  ["Tue", "Martedì"],
+  ["Wed", "Mercoledì"],
+  ["Thu", "Giovedì"],
+  ["Fri", "Venerdì"],
+  ["Sat", "Sabato"],
+  ["Sun", "Domenica"],
+];
+
 export default dayjs;

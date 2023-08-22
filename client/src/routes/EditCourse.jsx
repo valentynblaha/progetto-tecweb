@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import { Add, Clear, Delete, Save } from "@mui/icons-material";
 import MuiFileInput from "../utils/MuiFileInput";
-import { dayjsTimeToStr, strTimeToDayjs } from "../api/format";
+import { DAY_OPTIONS, dayjsTimeToStr, strTimeToDayjs } from "../api/format";
 
 export const courseEditAction = async ({ request, params }) => {
   const formData = await request.formData();
@@ -65,16 +65,6 @@ export const newCourseLoader = async () => {
   };
   return { course, categories };
 };
-
-const DAY_OPTIONS = [
-  ["Mon", "Lunedì"],
-  ["Tue", "Martedì"],
-  ["Wed", "Mercoledì"],
-  ["Thu", "Giovedì"],
-  ["Fri", "Venerdì"],
-  ["Sat", "Sabato"],
-  ["Sun", "Domenica"],
-];
 
 export default function EditCourse() {
   const { course, categories } = useLoaderData();
