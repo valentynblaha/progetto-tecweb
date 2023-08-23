@@ -29,9 +29,9 @@ export const signupLoader = async () => {
 
 export default function Signup() {
   const [error, setError] = useState("");
-  const errorRef = useRef(null)
+  const errorRef = useRef(null);
   const { categories: loadedCategories } = useLoaderData();
-  const [passwordRepeat , setPasswordRepeat] = useState("")
+  const [passwordRepeat, setPasswordRepeat] = useState("");
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -50,7 +50,6 @@ export default function Signup() {
   const avatarStyle = { backgroundColor: "blue" };
   const marginTop = { marginTop: 5 };
   const marginbottom = { marginbottom: 5 };
-
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
@@ -78,18 +77,17 @@ export default function Signup() {
             ))}
           </ul>
         );
-      }
-      else setError(String(error));
+      } else setError(String(error));
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if (passwordRepeat !== password){
+    e.preventDefault();
+    if (passwordRepeat !== password) {
       setError(String("La password scritta nei due campi deve corrispondere"));
-    }else{
-      postUserData()
-  }
+    } else {
+      postUserData();
+    }
   };
   return success ? (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
@@ -106,7 +104,7 @@ export default function Signup() {
           <h2 style={marginbottom}>Registrazione Istruttore</h2>
         </Grid>
         {error && (
-          <Alert severity="error" sx={{my: 1}} ref={errorRef}>
+          <Alert severity="error" sx={{ my: 1 }} ref={errorRef}>
             {error}
           </Alert>
         )}
@@ -114,8 +112,15 @@ export default function Signup() {
           <Grid container rowGap={1}>
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} required />
             <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required />
-            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required />
-            <TextField fullWidth label="Codice fiscale" value={cod_fisc} onChange={handleChange("cod_fisc")} required />
+            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required type="email" />
+            <TextField
+              fullWidth
+              label="Codice fiscale"
+              value={cod_fisc}
+              onChange={handleChange("cod_fisc")}
+              required
+              inputProps={{ pattern: "^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$" }}
+            />
             <TextField
               fullWidth
               label="Indirizzo palestra"
@@ -150,7 +155,7 @@ export default function Signup() {
                 <FormControlLabel value="male" control={<Radio />} label="Male" onChange={handleChange("gender")} />
               </RadioGroup>
             </FormControl>
-            <TextField fullWidth label="Numero Cellulare" value={phone} onChange={handleChange("phone")} required />
+            <TextField fullWidth label="Numero Cellulare" value={phone} onChange={handleChange("phone")} required type="tel" />
             <TextField
               fullWidth
               label="Password"
@@ -176,17 +181,17 @@ export default function Signup() {
               style={{ width: "50px", height: "50px" }}
               onChange={(val) => setValues({ ...values, image: val })}
               onError={(e) => {
-                setError(e.response?.data.image?.map((e, i) => <p key={i}>{e}</p>) || String(e))}}
+                setError(e.response?.data.image?.map((e, i) => <p key={i}>{e}</p>) || String(e));
+              }}
               required
             >
               Carica immagine
             </MuiFileInput>
           </Grid>
           <Button style={marginTop} type="submit" variant="contained" color="primary">
-          Sign up
-        </Button>
+            Sign up
+          </Button>
         </form>
-        
       </Paper>
     </Grid>
   );

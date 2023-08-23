@@ -62,6 +62,14 @@ export default function Signup() {
             ))}
           </ul>
         );
+      } else if (error.response?.status === 400 && error.response?.data.image) {
+        setError(
+          <ul>
+            {error.response.data.image.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        );
       }
       else setError(String(error));
     }
@@ -99,7 +107,7 @@ export default function Signup() {
           <Grid container rowGap={1}>
             <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required />
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} />
-            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required />
+            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required type="email"/>
             <FormControl component="fieldset" style={marginTop} required>
               <FormLabel component="legend">Sesso</FormLabel>
               <RadioGroup aria-label="gender" name="gender" style={{ display: "initial" }}>
