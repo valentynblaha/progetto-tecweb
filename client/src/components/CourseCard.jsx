@@ -1,8 +1,8 @@
-import { Button, Card, CardActionArea, CardContent, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, Chip, Grid, IconButton, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import LazyImg from "../utils/LazyImg";
-import { Delete, Edit } from "@mui/icons-material";
+import { AccessTime, Delete, Done, Edit } from "@mui/icons-material";
 import LinkBehavior from "../utils/LinkBehaviour";
 
 export default function CourseCard({ course, width, instructor_view = false }) {
@@ -31,9 +31,18 @@ export default function CourseCard({ course, width, instructor_view = false }) {
         </div>
         <div>
           {instructor_view && (
-            <Button startIcon={<Edit />} variant="outlined" component={LinkBehavior} to={`${course.id}/edit`}>
-              Modifica
-            </Button>
+            <>
+              {course.approved ? (
+                <Chip label="Approvato" icon={<Done />} color="success" />
+              ) : (
+                <Chip label="In attesa di approvazione" icon={<AccessTime />} color="warning" />
+              )}
+              <Box marginTop={1}>
+                <Button startIcon={<Edit />} variant="outlined" component={LinkBehavior} to={`${course.id}/edit`}>
+                  Modifica
+                </Button>
+              </Box>
+            </>
           )}
         </div>
       </CardContent>

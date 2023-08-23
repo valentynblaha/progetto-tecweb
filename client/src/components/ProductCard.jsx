@@ -7,10 +7,12 @@ import CustomRating from "./CustomRating";
 import useSnackbar from "../hooks/useSnackbar";
 import api from "../api/api";
 import useCart from "../hooks/useCart";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCard({ product }) {
 
   const setSnackbar = useSnackbar()
+  const navigate = useNavigate()
   const {update} = useCart()
 
   const handleAddToCart = async() => {
@@ -23,6 +25,10 @@ export default function ProductCard({ product }) {
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data.code === 1) {
         setSnackbar({ severity: "error", message: "Il prodotto non è più disponibile", open: true });
+      } else if (error.response?.status === 401) {
+        navigate("/login")
+      } else {
+        setSnackbar({ severity: "error", message: String(error), open: true });
       }
     }
   }

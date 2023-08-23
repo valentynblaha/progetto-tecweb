@@ -30,11 +30,13 @@ class ResetPasswordView(views.APIView):
         new_password = request.data.get('newPassword')
         old_password = request.data.get('oldPassword')
         if not user.check_password(old_password):
-            return Response({"detail": "password not valid"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "password not valid", "code": 1}, status=status.HTTP_400_BAD_REQUEST)
+        if old_password == new_password:
+            return Response({"detail": "The new password has to be different from the old one", "code": 2})
         try:
             validate_password(new_password)
         except exceptions.ValidationError as e:
-            return Response({"password": [er.message for er in e.error_list]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"password": [er.message for er in e.error_list], "code": 3}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(new_password)
         user.save()

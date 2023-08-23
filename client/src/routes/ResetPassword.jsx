@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField,  Avatar, Paper,Grid } from "@mui/material";
+import { Button, TextField,  Avatar, Paper,Grid, Alert } from "@mui/material";
 import api from "../api/api";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
@@ -27,18 +27,30 @@ function PasswordChange() {
            navigate('/')
         }
       } catch (error) {
-        if (error.response?.data.password.indexOf("This password is too short. It must contain at least %(min_length)d characters.") === 0) {
-           setError(String("la nuova password è troppo corta"))
-        }else if (error.response?.data.detail === "password not valid") {
-            setError(String("la vecchia password non è valida"))
-         }
+        if (error.response?.status === 400) {
+          switch (error.response.data.code) {
+            case 1:
+              setError("La vecchia password non è valida")
+              break;
+            case 2:
+              setError("La nuova password deve essere diversa dalla vecchia")
+              break;
+            case 3:
+              setError(<ul>{error.response.data.password.map((e, i) => <li key={i}>{e}</li>)}</ul>)
+              break;
+            default:
+              setError(String(error))
+          }
+        } else {
+          setError(String(error))
+        }        
       }
   };
   
   const handleSubmit = (event) => {
     event.preventDefault();
     if(passwordData.newPassword != passwordData.confirmNewPassword){
-        setError(String("la nuova password e conferma password non corrispondono"));
+        setError(String("La nuova password e conferma password non corrispondono"));
     }else{
          postUserData( passwordData )
         
@@ -50,24 +62,16 @@ function PasswordChange() {
   
 
   return (
-    <Grid component="form">
+    <Grid component="form" onSubmit={handleSubmit}>
     <Paper elevation={10} style={paperStyle}>
       <Grid align="center">
         <Avatar style={avatarStyle}></Avatar>
         <h2>Cambia Password</h2>
       </Grid>
       {error && (
-        <div
-          style={{
-            background: "rgb(255 0 43 / 21%)",
-            border: "2px solid red",
-            borderRadius: "0.5em",
-            padding: "0.5em",
-            marginBottom: "0.5em",
-          }}
-        >
-          {error}
-        </div>
+        <Alert severity="error" sx={{my: 2}}>
+        {error}
+      </Alert>
       )}
       <Grid container rowGap={1}>
       <TextField
@@ -98,7 +102,7 @@ function PasswordChange() {
           required
         />
       </Grid>
-      <Button type="submit" color="primary" variant="contained" onClick={handleSubmit} style={btnstyle} fullWidth>
+      <Button type="submit" color="primary" variant="contained" style={btnstyle} fullWidth>
         Cambia password
       </Button>
     </Paper>

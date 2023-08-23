@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, Paper, Avatar, TextField, Button, Typography } from "@mui/material";
+import { Grid, Paper, Avatar, TextField, Button, Typography, Alert } from "@mui/material";
 import api from "../api/api";
 import useAuth from "../hooks/useAuth";
+import LinkBehavior from "../utils/LinkBehaviour";
 
 export default function Login() {
   const [auth, setAuth] = useAuth();
@@ -33,7 +34,6 @@ export default function Login() {
         throw new Error("Errore nel recapitare i dati dell'utente");
       }
       setAuth(user);
-      //performRedirect();
     } catch (error) {
       setError(String("Email o password non corretti"));
     }
@@ -42,9 +42,6 @@ export default function Login() {
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
-  // const performRedirect = () => {
-  //   navigate("/");
-  // };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -56,24 +53,16 @@ export default function Login() {
   const btnstyle = { margin: "20px 0" };
   const btnstyle2 = { margin: "20px 0 10px 0" };
   return (
-    <Grid component="form">
+    <Grid component="form" onSubmit={handleSubmit}>
       <Paper elevation={10} style={paperStyle}>
         <Grid align="center">
           <Avatar style={avatarStyle}></Avatar>
-          <h2>Sign In</h2>
+          <h2>Login</h2>
         </Grid>
         {error && (
-          <div
-            style={{
-              background: "rgb(255 0 43 / 21%)",
-              border: "2px solid red",
-              borderRadius: "0.5em",
-              padding: "0.5em",
-              marginBottom: "0.5em",
-            }}
-          >
+          <Alert severity="error" sx={{my: 1}}>
             {error}
-          </div>
+          </Alert>
         )}
         <Grid container rowGap={1}>
           <TextField
@@ -94,15 +83,15 @@ export default function Login() {
             required
           />
         </Grid>
-        <Button type="submit" color="primary" variant="contained" onClick={handleSubmit} style={btnstyle} fullWidth>
-          Sign in
+        <Button type="submit" color="primary" variant="contained" sx={btnstyle} fullWidth>
+          Login
         </Button>
         <Typography align="center"> Sei nuovo su Fitcourse?</Typography>
-        <Button variant="outlined" align="center" style={btnstyle2} fullWidth href="/signup/user">
-          registrati come utente
+        <Button variant="outlined" align="center" sx={btnstyle2} fullWidth component={LinkBehavior} to="/signup/user">
+          Registrati come utente
         </Button>
-        <Button variant="outlined" align="center" fullWidth href="/signup/instructor">
-          registrati come istruttore
+        <Button variant="outlined" align="center" fullWidth component={LinkBehavior} to="/signup/instructor">
+          Registrati come istruttore
         </Button>
       </Paper>
     </Grid>

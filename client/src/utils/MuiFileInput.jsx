@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import api from "../api/api";
 import "./MuiFileInput.css";
 
-export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required = false }) {
+export default function MuiFileInput({ children, accept, id, url, style, name, onChange, required = false, onError }) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [imgPath, setImgPath] = useState("");
@@ -22,7 +22,6 @@ export default function MuiFileInput({ children, accept, id, url, style, name, o
         id={id}
         type="file"
         disabled={loading}
-        required={required}
         onChange={(e) => {
           setLoading(true);
           const formData = new FormData();
@@ -38,11 +37,11 @@ export default function MuiFileInput({ children, accept, id, url, style, name, o
             .catch((error) => {
               setLoading(false);
               setProgress(0)
-              console.log("An error has occured: " + error);
+              if (onError) onError(error)
             });
         }}
       />
-      <input readOnly value={imgPath} name={name} type="hidden" />
+      <input readOnly value={imgPath} name={name} type="hidden" required={required}/>
       <label htmlFor={id}>
         {/* <Button variant="outlined" component="span" disabled={loading}>
           {children}
