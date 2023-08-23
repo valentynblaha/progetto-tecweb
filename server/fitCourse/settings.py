@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'rest_framework',
     'corsheaders',
+    'django_extensions',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

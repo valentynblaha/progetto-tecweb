@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "77bab3dc8feacdc3bf90aa19b3e901129a52af0ac69a3fec47876d55300913bb"
+            "sha256": "8c24dfb2e329dd634b7573e0374b941c5539fcf6a7b6e4a44015b164c937f246"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -235,10 +235,10 @@
         },
         "django-allauth": {
             "hashes": [
-                "sha256:120e265f802b65738899c6cb627b827fde46a4d03067034c633f516c2adf3e3e"
+                "sha256:6b9dee8bbfa4b9e4c346a1cda3b880c230c98fbe71253d7c48ae0df0d86a2642"
             ],
             "index": "pypi",
-            "version": "==0.54.0"
+            "version": "==0.55.0"
         },
         "django-cors-headers": {
             "hashes": [
@@ -247,6 +247,14 @@
             ],
             "index": "pypi",
             "version": "==4.2.0"
+        },
+        "django-extensions": {
+            "hashes": [
+                "sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a",
+                "sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401"
+            ],
+            "index": "pypi",
+            "version": "==3.2.3"
         },
         "djangorestframework": {
             "hashes": [
@@ -266,11 +274,11 @@
         },
         "djangorestframework-simplejwt": {
             "hashes": [
-                "sha256:4c0d2e2513e12587d93501ac091781684a216c3ee614eb3b5a10586aef5ca845",
-                "sha256:d27d4bcac2c6394f678dea8b4d0d511c6e18a7f2eb8aaeeb8a7de601aeb77c42"
+                "sha256:631d7ae2ed4365d7196a35d3cc0f6d382f7bd3361fb24c894f8f92b4da5db27d",
+                "sha256:8e4c5dfca8d11c0b8a66dfd8a4e3fc1c6aa7ea188d10907ff91c942f4b52ed66"
             ],
             "index": "pypi",
-            "version": "==5.2.2"
+            "version": "==5.3.0"
         },
         "idna": {
             "hashes": [
@@ -525,5 +533,13 @@
             "version": "==2.0.4"
         }
     },
-    "develop": {}
+    "develop": {
+        "pygraphviz": {
+            "hashes": [
+                "sha256:a97eb5ced266f45053ebb1f2c6c6d29091690503e3a5c14be7f908b37b06f2d4"
+            ],
+            "index": "pypi",
+            "version": "==1.11"
+        }
+    }
 }

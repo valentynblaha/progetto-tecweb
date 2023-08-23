@@ -14,8 +14,10 @@ djangorestframework-simplejwt = "*"
 djangorestframework-jwt = "*"
 numpy = "*"
 scikit-learn = "*"
+django-extensions = "*"
 
 [dev-packages]
+pygraphviz = "*"
 
 [requires]
 python_version = "3.11"
