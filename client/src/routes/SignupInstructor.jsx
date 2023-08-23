@@ -31,7 +31,6 @@ export default function Signup() {
   const [error, setError] = useState("");
   const errorRef = useRef(null)
   const { categories: loadedCategories } = useLoaderData();
-  const [error, setError] = useState("");
   const [passwordRepeat , setPasswordRepeat] = useState("")
   const [values, setValues] = useState({
     email: "",
