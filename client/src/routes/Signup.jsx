@@ -13,6 +13,7 @@ import {
   FormControl,
   FormLabel,
   Checkbox,
+  Alert,
 } from "@mui/material";
 import MuiFileInput from "../utils/MuiFileInput";
 import api from "../api/api";
@@ -27,7 +28,7 @@ export default function Signup() {
     last_name: "",
     phone: "",
     gender: "",
-    image: null
+    image: null,
   });
 
   const [success, setSuccess] = useState(false);
@@ -40,17 +41,30 @@ export default function Signup() {
 
   const postUserData = async () => {
     try {
-      const response = await api.post("api/user/register_user/",  values );
+      const response = await api.post("api/user/register_user/", values);
       if (response.status === 201) {
-        setSuccess(true)
+        setSuccess(true);
       }
     } catch (error) {
       if (error.response?.status === 400 && error.response?.data.password) {
-        setError(<ul>{error.response.data.password.map((e, i) => <li key={i}>{e}</li>)}</ul>)
-      } else
-      setError(String(error))
+        setError(
+          <ul>
+            {error.response.data.password.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        );
+      } else if (error.response?.status === 400 && error.response?.data.email) {
+        setError(
+          <ul>
+            {error.response.data.email.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        );
+      }
+      else setError(String(error));
     }
-    
   };
 
   const handleChange = (name) => (event) => {
@@ -58,8 +72,8 @@ export default function Signup() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    postUserData()
+    e.preventDefault();
+    postUserData();
   };
 
   return success ? (
@@ -77,23 +91,15 @@ export default function Signup() {
           <h2 style={marginbottom}>Registrazione User</h2>
         </Grid>
         {error && (
-          <div
-            style={{
-              background: "rgb(255 0 43 / 21%)",
-              border: "2px solid red",
-              borderRadius: "0.5em",
-              padding: "0.5em",
-              marginBottom: "0.5em",
-            }}
-          >
+          <Alert severity="error" sx={{ my: 1 }}>
             {error}
-          </div>
+          </Alert>
         )}
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit}>
           <Grid container rowGap={1}>
-            <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required/>
+            <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required />
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} />
-            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required/>
+            <TextField fullWidth label="Email" value={email} onChange={handleChange("email")} required />
             <FormControl component="fieldset" style={marginTop} required>
               <FormLabel component="legend">Sesso</FormLabel>
               <RadioGroup aria-label="gender" name="gender" style={{ display: "initial" }}>
@@ -101,7 +107,7 @@ export default function Signup() {
                 <FormControlLabel value="male" control={<Radio />} label="Male" onChange={handleChange("gender")} />
               </RadioGroup>
             </FormControl>
-            <TextField fullWidth label="Numero Cellulare" value={phone} onChange={handleChange("phone")} required/>
+            <TextField fullWidth label="Numero Cellulare" value={phone} onChange={handleChange("phone")} required />
             <TextField
               fullWidth
               required
@@ -123,17 +129,16 @@ export default function Signup() {
               id="user-image"
               url="api/user/upload/"
               style={{ width: "50px", height: "50px" }}
-              onChange = {val => setValues({...values, image: val})}
+              onChange={(val) => setValues({ ...values, image: val })}
               required
             >
               Carica immagine
             </MuiFileInput>
           </Grid>
           <Button style={marginTop} type="submit" variant="contained" color="primary">
-              Sign up
-        </Button>
+            Sign up
+          </Button>
         </form>
-       
       </Paper>
     </Grid>
   );
