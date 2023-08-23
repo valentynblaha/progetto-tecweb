@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import FitnessCategory, Course, CourseSchedule, Instructor, CourseSubscription
 from user.serializers import UserPublicSerializer
-
+from django.contrib.auth.password_validation import validate_password
+from django.core import exceptions
 class FitnessCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FitnessCategory
@@ -115,6 +116,10 @@ class InstructorSerializer(serializers.ModelSerializer):
         instance.is_superuser = False
 
         if password is not None:
+            try:
+                validate_password(password=password)
+            except exceptions.ValidationError as e:
+                raise serializers.ValidationError({"password": [er.message for er in e.error_list]})
             instance.set_password(password)
         instance.save()
         instance.categories.set(categories)

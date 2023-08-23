@@ -55,18 +55,40 @@ export default function Signup() {
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
-  const postUserData = async ({ values }) => {
-    const response = await api.post("api/course/register_instructor/", values);
-    return response;
-  };
-  const handleSubmit = (e) => {
-    if (passwordRepeat !== password){
-      setError(String("password scritta in due campi deve corrispondere"));
-    }else{
-      const response = postUserData({ values });
-      if (response) {
+  const postUserData = async () => {
+    try {
+      const response = await api.post("api/course/register_instructor/", values);
+      if (response.status === 201) {
         setSuccess(true);
       }
+    } catch (error) {
+      if (error.response?.status === 400 && error.response?.data.password) {
+        setError(
+          <ul>
+            {error.response.data.password.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        );
+      } else if (error.response?.status === 400 && error.response?.data.email) {
+        setError(
+          <ul>
+            {error.response.data.email.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        );
+      }
+      else setError(String(error));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (passwordRepeat !== password){
+      setError(String("La password scritta nei due campi deve corrispondere"));
+    }else{
+      postUserData()
   }
   };
   return success ? (
@@ -88,7 +110,7 @@ export default function Signup() {
             {error}
           </Alert>
         )}
-        <form>
+        <form onSubmit={handleSubmit}>
           <Grid container rowGap={1}>
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} required />
             <TextField fullWidth label="Nome" value={first_name} onChange={handleChange("first_name")} required />
@@ -160,10 +182,11 @@ export default function Signup() {
               Carica immagine
             </MuiFileInput>
           </Grid>
-        </form>
-        <Button style={marginTop} type="submit" variant="contained" onClick={handleSubmit} color="primary">
+          <Button style={marginTop} type="submit" variant="contained" color="primary">
           Sign up
         </Button>
+        </form>
+        
       </Paper>
     </Grid>
   );
