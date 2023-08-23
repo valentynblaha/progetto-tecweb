@@ -28,6 +28,8 @@ export const signupLoader = async () => {
 
 export default function Signup() {
   const { categories: loadedCategories } = useLoaderData();
+  const [error, setError] = useState("");
+  const [passwordRepeat , setPasswordRepeat] = useState("")
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -55,10 +57,14 @@ export default function Signup() {
     return response;
   };
   const handleSubmit = (e) => {
-    const response = postUserData({ values });
-    if (response) {
-      setSuccess(true);
-    }
+    if (passwordRepeat !== password){
+      setError(String("password scritta in due campi deve corrispondere"));
+    }else{
+      const response = postUserData({ values });
+      if (response) {
+        setSuccess(true);
+      }
+  }
   };
   return success ? (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
@@ -74,6 +80,19 @@ export default function Signup() {
           <Avatar style={avatarStyle}></Avatar>
           <h2 style={marginbottom}>Registrazione Istruttore</h2>
         </Grid>
+        {error && (
+        <div
+          style={{
+            background: "rgb(255 0 43 / 21%)",
+            border: "2px solid red",
+            borderRadius: "0.5em",
+            padding: "0.5em",
+            marginBottom: "0.5em",
+          }}
+        >
+          {error}
+        </div>
+        )}
         <form>
           <Grid container rowGap={1}>
             <TextField fullWidth label="Cognome" value={last_name} onChange={handleChange("last_name")} required />
@@ -120,6 +139,16 @@ export default function Signup() {
               label="Password"
               value={password}
               onChange={handleChange("password")}
+              type="password"
+              required
+            />
+            <TextField
+              fullWidth
+              label="Ripeti Password"
+              value={passwordRepeat}
+              onChange={(e) => {
+                setPasswordRepeat(e.target.value);
+              }}
               type="password"
               required
             />
