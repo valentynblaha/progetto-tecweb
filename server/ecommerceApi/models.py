@@ -27,7 +27,7 @@ class Product(models.Model):
     name=models.CharField(max_length=200)
     image=models.FileField(upload_to="images/products", blank=True)
     brand=models.CharField(max_length=200,blank=True)
-    category=models.CharField(ProductCategory, max_length=2)
+    category=models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True)
     size = models.CharField(choices=SIZE_CHOICES,max_length=2)
     description=models.TextField(blank=True)
     price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
