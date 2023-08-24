@@ -8,7 +8,7 @@ import useAuth from "../hooks/useAuth";
 
 export const homeLoader = async () => {
   const response = await Promise.all([
-    api.get("api/ecommerce/recommended/"),
+    api.get("api/ecommerce/recommended?max_products=5"),
   ]);
   return { products: response[0].data };
 };

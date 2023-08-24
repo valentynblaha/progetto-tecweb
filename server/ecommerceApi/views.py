@@ -200,7 +200,10 @@ class RecommendedView(APIView):
             user_index = users[review.user]
             rating_matrix[product_index, user_index] = review.rating
 
-        SVD = TruncatedSVD(n_components=num_products if num_products < 10 else 10)
+        n = num_products if num_products < 10 else 10
+        if n == 0:
+            n = 2
+        SVD = TruncatedSVD(n_components=n)
         decomposed_matrix = SVD.fit_transform(rating_matrix)
         correlation_matrix = np.corrcoef(decomposed_matrix)
 
