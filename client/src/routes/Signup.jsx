@@ -96,7 +96,7 @@ export default function Signup() {
       <Paper elevation={20} style={paperStyle}>
         <Grid align="center">
           <Avatar style={avatarStyle}></Avatar>
-          <h2 style={marginbottom}>Registrazione User</h2>
+          <h2 style={marginbottom}>Registrazione Utente</h2>
         </Grid>
         {error && (
           <Alert severity="error" sx={{ my: 1 }}>
@@ -111,8 +111,8 @@ export default function Signup() {
             <FormControl component="fieldset" style={marginTop} required>
               <FormLabel component="legend">Sesso</FormLabel>
               <RadioGroup aria-label="gender" name="gender" style={{ display: "initial" }}>
-                <FormControlLabel value="female" control={<Radio />} label="Female" onChange={handleChange("gender")} />
-                <FormControlLabel value="male" control={<Radio />} label="Male" onChange={handleChange("gender")} />
+                <FormControlLabel value="female" control={<Radio />} label="F" onChange={handleChange("gender")} />
+                <FormControlLabel value="male" control={<Radio />} label="M" onChange={handleChange("gender")} />
               </RadioGroup>
             </FormControl>
             <TextField fullWidth label="Numero Cellulare" value={phone} onChange={handleChange("phone")} required />
